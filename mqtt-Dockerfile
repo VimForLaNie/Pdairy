@@ -1,0 +1,13 @@
+FROM eclipse-mosquitto:latest
+
+COPY ./mosquitto.conf /mosquitto/config/mosquitto.conf
+COPY ./keys/ca.crt /mosquitto/config/ca.crt
+COPY ./keys/broker.crt /mosquitto/config/broker.crt
+COPY ./keys/broker.key /mosquitto/config/broker.key
+COPY ./password.txt /mosquitto/config/password.txt
+
+RUN mosquitto_passwd -U /mosquitto/config/password.txt
+
+EXPOSE 8883
+
+CMD [ "mosquitto", "-c", "/mosquitto/config/mosquitto.conf" ]
