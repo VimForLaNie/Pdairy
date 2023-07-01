@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import redisClient from "../Redis/redisClient";
+import startRedisClient from "../Redis/redisClient";
 
 import { PrismaClient } from '@prisma/client'
 import crypto from "crypto";
@@ -8,6 +8,7 @@ import crypto from "crypto";
 const prisma = new PrismaClient();
 const expressApp = express();
 const jsonParser = bodyParser.json();
+const redisClient = startRedisClient();
 
 expressApp.post('/cache', jsonParser, (req, res) => {
     const { key, value } = req.body;

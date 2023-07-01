@@ -1,9 +1,10 @@
-import redis from "redis";
+import { createClient } from 'redis'
 
-const redisClient = redis.createClient({
-    url: 'redis://redis:6379'
-});
+export type RedisClientType = ReturnType<typeof createClient>
 
-redisClient.on('error', err => console.log('Redis Client Error', err));
-
-export default redisClient;
+export default function startRedisClient(): RedisClientType {
+    const redisClient: RedisClientType = createClient({ url: `redis://redis:6379` });
+    redisClient.on('error', err => console.error('Redis Client Error', err));
+    redisClient.on('connect', () => console.info('Redis Client Connected'));
+    return redisClient;
+}

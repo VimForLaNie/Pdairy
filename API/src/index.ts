@@ -3,15 +3,12 @@ import dotenvExpand from 'dotenv-expand';
 let myEnv = dotenv.config()
 dotenvExpand.expand(myEnv);
 import expressApp from './express/expressApp';
-import redisClient from './Redis/redisClient';
 import mqttClient from './MQTT/mqttClient';
 import { PrismaClient } from '@prisma/client';
 
 const PORT = 3000;
 
 const db = new PrismaClient();
-
-redisClient.connect();
 
 expressApp.listen(PORT, () => console.log(`API Server listening on port ${PORT}!`));
 
