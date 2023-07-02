@@ -16,7 +16,6 @@ expressApp.post('/cache', jsonParser, (req, res) => {
     redisClient.set(key, value);
     res.sendStatus(200);
 });
-
 expressApp.get('/', (req, res) => {
     let cnt = 1;
     for (let i = 1; i <= 1000; i++) {
