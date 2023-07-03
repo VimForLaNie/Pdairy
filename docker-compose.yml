@@ -41,6 +41,17 @@ services:
       dockerfile: ./mqtt-Dockerfile
     ports:
       - 8883:8883
+  dashboard :
+    build: 
+      context: ./
+      dockerfile: ./dashboard/Dockerfile
+    restart: always
+    depends_on:
+      - api
+    links: 
+      - "api:api"
+    ports:
+      - 8080:4173
   api:
     env_file:
       - .env

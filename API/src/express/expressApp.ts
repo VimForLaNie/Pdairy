@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import startRedisClient from "../Redis/redisClient";
+import path from "path";
 
 import { PrismaClient } from '@prisma/client'
 import crypto from "crypto";
@@ -17,12 +18,8 @@ expressApp.post('/cache', jsonParser, (req, res) => {
     res.sendStatus(200);
 });
 expressApp.get('/', (req, res) => {
-    let cnt = 1;
-    for (let i = 1; i <= 1000; i++) {
-        cnt *= i;
-        cnt %= 1000000007;
-    }
-    res.send(`Hello World! ${cnt}`);
+    res.send('Hello World!');
+    // res.sendFile(path.join('/src/express', '/index.html'));
 });
 
 expressApp.get('/read', async (req, res) => {
