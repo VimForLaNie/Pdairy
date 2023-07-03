@@ -11,12 +11,16 @@ volumes:
 services:
   nginx:
     image: nginx:alpine
+    restart: always
+    links:
+      - "dashboard:dashboard"
     ports:
       - 80:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - api
+      - dashboard
   postgres:
     env_file:
       - .env
@@ -51,7 +55,7 @@ services:
     links: 
       - "api:api"
     ports:
-      - 8080:4173
+      - 4173
   api:
     env_file:
       - .env

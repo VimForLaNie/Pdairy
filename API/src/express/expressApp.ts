@@ -5,6 +5,7 @@ import path from "path";
 
 import { PrismaClient } from '@prisma/client'
 import crypto from "crypto";
+import { nextTick } from "process";
 
 const prisma = new PrismaClient();
 const expressApp = express();
@@ -19,7 +20,6 @@ expressApp.post('/cache', jsonParser, (req, res) => {
 });
 expressApp.get('/', (req, res) => {
     res.send('Hello World!');
-    // res.sendFile(path.join('/src/express', '/index.html'));
 });
 
 expressApp.get('/read', async (req, res) => {
