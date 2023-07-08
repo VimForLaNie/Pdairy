@@ -12,4 +12,4 @@ COPY ./dashboard/svelte.config.js ./
 COPY ./dashboard/src/ ./src
 RUN npm run build
 
-CMD [ "npm", "run", "preview" ]
+CMD [ "node", "./build" ]
