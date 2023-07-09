@@ -6,7 +6,7 @@ import expressApp from './express/expressApp';
 import mqttClient from './MQTT/mqttClient';
 import { PrismaClient } from '@prisma/client';
 
-const PORT = 3000;
+const PORT = 8080;
 
 const db = new PrismaClient();
 

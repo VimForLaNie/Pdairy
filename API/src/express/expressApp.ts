@@ -1,14 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
 import startRedisClient from "../Redis/redisClient";
-import path from "path";
 
 import { PrismaClient } from '@prisma/client'
 import crypto from "crypto";
-import { nextTick } from "process";
+import cors from "cors";
 
 const prisma = new PrismaClient();
 const expressApp = express();
+expressApp.use(cors());
 const jsonParser = bodyParser.json();
 const redisClient = startRedisClient();
 
@@ -26,12 +26,16 @@ expressApp.get('/read', async (req, res) => {
     res.send(await prisma.milkRecord.findMany());
 });
 
+expressApp.get('/cows', async (req, res) => {
+    res.send(await prisma.cow.findMany());
+});
+
 expressApp.post('/farm', jsonParser, async (req, res) => {
-    const apiKey = req.headers['x-api-key'];
-    if(apiKey !== process.env.API_KEY){
-        console.log(apiKey);
-        return res.sendStatus(403);
-    }
+    // const apiKey = req.headers['x-api-key'];
+    // if(apiKey !== process.env.API_KEY){
+    //     console.log(apiKey);
+    //     return res.sendStatus(403);
+    // }
 
     const { farmName, owner } = req.body;
     console.log('Got body:', req.body);
@@ -47,11 +51,12 @@ expressApp.post('/farm', jsonParser, async (req, res) => {
 });
 
 expressApp.post('/cow', jsonParser, async (req, res) => {
-    const apiKey = req.headers['x-api-key'];
-    if(apiKey !== process.env.API_KEY) return res.sendStatus(403);
+    // const apiKey = req.headers['x-api-key'];
+    // if(apiKey !== process.env.API_KEY) return res.sendStatus(403);
 
     const { cowName, farmID, id, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic} = req.body;
     console.log('Got body:', req.body);
+    console.log(req.params);
     const result = await prisma.cow.create({
         data: {
             id: id,

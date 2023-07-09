@@ -1,8 +1,8 @@
 <script>
-	import './styles.css';
+	import "../app.css";
 </script>
 
-<div class="app">
+<div class="app flex flex-col w-full items-center">
 	<main>
 		<slot />
 	</main>

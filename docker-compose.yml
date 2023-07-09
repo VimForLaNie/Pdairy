@@ -12,15 +12,14 @@ services:
   nginx:
     image: nginx:alpine
     restart: always
-    links:
-      - "dashboard:dashboard"
     ports:
       - 80:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - api
-      - dashboard
+    expose:
+      - 80
   postgres:
     env_file:
       - .env
@@ -50,12 +49,10 @@ services:
       context: ./
       dockerfile: ./dashboard/Dockerfile
     restart: always
-    depends_on:
-      - api
-    links: 
-      - "api:api"
     ports:
-      - 4173
+      - 3000:3000
+    expose:
+      - 3000
   api:
     env_file:
       - .env
@@ -71,5 +68,5 @@ services:
       - "mqtt:broker"
       - "redis:redis"
       - "postgres:db"
-    ports:
-      - 3000
+    expose:
+      - 8080
