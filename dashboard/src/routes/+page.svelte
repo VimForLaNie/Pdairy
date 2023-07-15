@@ -1,4 +1,6 @@
 <script lang="ts">
+	import '../src/app.css';
+
 	let table:HTMLTableElement;
 	const showCows = () => {
 		fetch('http://localhost/api/cows')

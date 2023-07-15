@@ -25,6 +25,16 @@ setInterval(() => {
         if (now - value > 2 * 60 * 1000) {
             cartToCowID.delete(key);
             latestInput.delete(key);
+            const result = cowResult.get(key);
+            if(typeof result === 'number' && result > 0) {
+                db.milkRecord.create({
+                    data: { 
+                        cowId: key,
+                        recordedAt : new Date(),
+                        weight : result 
+                    }
+                });
+            }
         }
     });
 }, 2 * 60 * 1000);
