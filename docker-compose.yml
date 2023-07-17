@@ -31,6 +31,8 @@ services:
       - db:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./customPostgresql.conf:/etc/postgresql.conf
+    ports:
+      - 5432:5432
   redis:
     image: "redis:alpine"
     volumes:
