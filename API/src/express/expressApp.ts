@@ -30,10 +30,40 @@ expressApp.get('/cows', async (req, res) => {
     res.send(await prisma.cow.findMany());
 });
 
+expressApp.get('/getMilkRecord', async (req, res) => {
+    const { cowID } = req.query;
+    // console.log('Got query:', req.query);
+    if (cowID === undefined) {
+        return res.sendStatus(400);
+    }
+    const result = await prisma.milkRecord.findMany({
+        where: {
+            cowId: cowID.toString(),
+        },
+    });
+    res.send(result);
+});
+
+expressApp.post('/prediction',jsonParser , async (req, res) => {
+    console.log('Got query:', req.body);
+    const { cowID, predictions } = req.body;
+    if (cowID === undefined || predictions === undefined || predictions.length === 0) {
+        return res.sendStatus(400);
+    }
+    const result = await prisma.cow.update({
+        where: {
+            id: cowID.toString(),
+        },
+        data: {
+            Prediction: JSON.stringify(predictions),
+        },
+    });
+    res.send(result);
+});
+
 expressApp.post('/farm', jsonParser, async (req, res) => {
     // const apiKey = req.headers['x-api-key'];
     // if(apiKey !== process.env.API_KEY){
-    //     console.log(apiKey);
     //     return res.sendStatus(403);
     // }
 
@@ -54,7 +84,7 @@ expressApp.post('/cow', jsonParser, async (req, res) => {
     // const apiKey = req.headers['x-api-key'];
     // if(apiKey !== process.env.API_KEY) return res.sendStatus(403);
 
-    const { cowName, farmID, id, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic} = req.body;
+    const { cowName, farmID, id, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic } = req.body;
     console.log('Got body:', req.body);
     console.log(req.params);
     const result = await prisma.cow.create({

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      =  env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model BreedingRecord {
@@ -30,6 +30,7 @@ model Cow {
   name           String
   farmId         String?
   BreedingRecord BreedingRecord[]
+  Prediction     Json?
   Farm           Farm?            @relation(fields: [farmId], references: [id])
   MilkRecord     MilkRecord[]
 }
