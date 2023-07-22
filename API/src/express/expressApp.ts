@@ -61,6 +61,20 @@ expressApp.post('/prediction',jsonParser , async (req, res) => {
     res.send(result);
 });
 
+expressApp.post('/forceRecord', jsonParser, async (req, res) => {
+    const { cowID, weight } = req.body;
+    console.log('Got body:', req.body);
+    const result = await prisma.milkRecord.create({
+        data: {
+            weight: weight,
+            cowId: cowID,
+            recordedAt : new Date(),
+        },
+    });
+    console.log(result);
+    res.send(result);
+});
+
 expressApp.post('/farm', jsonParser, async (req, res) => {
     // const apiKey = req.headers['x-api-key'];
     // if(apiKey !== process.env.API_KEY){
@@ -89,12 +103,12 @@ expressApp.post('/cow', jsonParser, async (req, res) => {
     console.log(req.params);
     const result = await prisma.cow.create({
         data: {
-            id: id,
+            id: crypto.randomBytes(16).toString('hex'),
             name: cowName,
             farmId: farmID,
             genetic: genetic,
             birthdate: new Date(),
-            weightAtBirth: weightAtBirth,
+            weightAtBirth: parseFloat(weightAtBirth),
             fatherName: fatherName,
             motherName: motherName,
             fatherGenetic: fatherGenetic,

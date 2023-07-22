@@ -3,17 +3,36 @@
 	import Button, { Label } from '@smui/button';
 	import Textfield from '@smui/textfield';
 	import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
+	// import crypto from 'crypto';
+	// import { PrismaClient } from '@prisma/client';
+	// const prisma = new PrismaClient();
 
-	const formFields = ["Cow's  Name", "Farm Name", "Cow's Genetic", "Father's Name", "Father's Genetic", "Mother's Name", "Mother's Genetic"]
+	const formFields = ["Cow's  Name", "Farm Name", "Cow's Genetic", "Father's Name", "Father's Genetic", "Mother's Name", "Mother's Genetic"];
 
 	let tempCow = ["", "", "", "", "", "", ""];
-	let birthdate = 0;
+	let birthdate:Date = new Date();
 	let weightAtBirth = 0;
 
 	let cowsData: any;
-	const showCows = () => {
-		cowsData = fetch('http://localhost/api/cows')
-			.then(async res => res.json());
+	const showCows = async () => {
+		cowsData = await fetch('/api/cows').then(async res => res.json());
+		console.log(cowsData);
+	}
+
+	const createCow = () => {
+		const data = {
+			cowName: tempCow[0],
+			farmId: tempCow[1],
+			genetic: tempCow[2],
+			birthdate: birthdate,
+			weightAtBirth: weightAtBirth,
+			fatherName: tempCow[3],
+			fatherGenetic: tempCow[4],
+			motherName: tempCow[5],
+			motherGenetic: tempCow[6]
+		}
+		console.log(JSON.stringify(data));
+		postData('/api/cow', data);
 	}
 
 	const postData = (url: string, data: any) => {
@@ -45,7 +64,7 @@
 		<Textfield label="Birth Date" type="datetime-local" bind:value={birthdate} class="mt-2"/>
 		<Textfield label="Weight At Birth" type="number" bind:value={weightAtBirth} class="mt-2"/>
 		
-		<Button on:click={() => console.log("Yay")} class="mt-5" variant="raised">
+		<Button on:click={createCow} class="mt-5" variant="raised">
 			<Label>Insert Cow</Label>
 		</Button>
 	</div>
@@ -54,7 +73,7 @@
 	<Button on:click={showCows} class="mt-5" variant="raised">
 		<Label>Show Cows</Label>
 	</Button>
-	{#if cowsData}
+	{#if cowsData?.length > 0}
 	<DataTable stickyHeader table$aria-label="User list" style="width: 100%;">
 		<Head>
 		  <Row>

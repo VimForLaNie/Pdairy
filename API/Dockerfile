@@ -9,7 +9,7 @@ RUN npx prisma generate
 
 RUN npm install @prisma/client
 
-COPY ./API/.env ./.env
+# COPY ./.env ./.env
 COPY ./API/src ./src
 COPY ./keys/client.key ./keys/client.key
 COPY ./keys/client.crt ./keys/client.crt
