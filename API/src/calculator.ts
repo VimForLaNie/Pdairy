@@ -33,19 +33,20 @@ class stateMachine {
                 this.latestNumber = number;
                 return -1;
             case 2:
-                if(number < this.latestNumber + this._increasingAmount) {
+                if (number < this._zeroThreshold) {
+                    console.debug(`get back to zero . . . ${number}`);
+                    this._state = 0;
+                    return this.getResult();
+                }
+                else if(number < this.latestNumber + this._increasingAmount) {
                     console.debug(`stablizing . . . ${number}`);
                     this._movingAvg.push(number);
                     if(this._movingAvg.length > this._movingAvgSize) {
                         this._movingAvg.shift();
                     }
                     this.result = this._movingAvg.reduce((a, b) => a + b, 0) / this._movingAvg.length;
+                    console.log(`result: ${this.result}`);
                     return -1;
-                }
-                else if (number < this._zeroThreshold) {
-                    console.debug(`get back to zero . . . ${number}`);
-                    this._state = 0;
-                    return this.getResult();
                 }
                 else if (number < this._bucket && number > this._zeroThreshold){
                     console.debug(`new bucket . . . ${number}`);
