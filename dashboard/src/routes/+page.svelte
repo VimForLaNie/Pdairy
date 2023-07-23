@@ -3,35 +3,32 @@
 	import Button, { Label } from '@smui/button';
 	import Textfield from '@smui/textfield';
 	import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
-	// import crypto from 'crypto';
-	// import { PrismaClient } from '@prisma/client';
-	// const prisma = new PrismaClient();
 
 	const formFields = ["Cow's  Name", "Farm Name", "Cow's Genetic", "Father's Name", "Father's Genetic", "Mother's Name", "Mother's Genetic"];
 
 	let tempCow = ["", "", "", "", "", "", ""];
-	let birthdate:Date = new Date();
+	let birthdate:number = new Date().getTime();
 	let weightAtBirth = 0;
 
 	let cowsData: any;
 	const showCows = async () => {
-		cowsData = await fetch('/api/cows').then(async res => res.json());
+		cowsData = await fetch('/api/getCows').then(async res => res.json());
 		console.log(cowsData);
 	}
 
 	const createCow = () => {
 		const data = {
-			cowName: tempCow[0],
-			farmId: tempCow[1],
+			name: tempCow[0],
+			farmID: tempCow[1],
 			genetic: tempCow[2],
-			birthdate: birthdate,
+			birthDate: birthdate,
 			weightAtBirth: weightAtBirth,
 			fatherName: tempCow[3],
 			fatherGenetic: tempCow[4],
 			motherName: tempCow[5],
 			motherGenetic: tempCow[6]
 		}
-		console.log(JSON.stringify(data));
+		// console.log(JSON.stringify(data));
 		postData('/api/cow', data);
 	}
 
@@ -43,7 +40,11 @@
 				'Content-Type': 'application/json'
 			}
 		})
-		.then(res => res.json())
+		.then(async (res) => {
+			const result = await res.json()
+			console.log(`Result : `,result)
+			return result
+		})
 		.catch(err => console.log(err));
 	}
 </script>
@@ -60,7 +61,7 @@
 	<div class="flex flex-col p-3 border-zinc-800 border-2 mx-2 rounded-md">
 		{#each formFields as field, index}
 			<Textfield label={field} bind:value={tempCow[index]} class="mt-2" input$maxlength={30} />	
-			{/each}
+		{/each}
 		<Textfield label="Birth Date" type="datetime-local" bind:value={birthdate} class="mt-2"/>
 		<Textfield label="Weight At Birth" type="number" bind:value={weightAtBirth} class="mt-2"/>
 		
@@ -78,6 +79,7 @@
 		<Head>
 		  <Row>
 			<Cell numeric>ID</Cell>
+			<Cell>Name</Cell>
 			<Cell>Genetic</Cell>
 			<Cell>Birth Date</Cell>
 			<Cell>Weight At Birth</Cell>
@@ -90,10 +92,11 @@
 		<Body>
 		  {#each cowsData as data, index}
 			<Row>
-			  <Cell numeric>{index}</Cell>
-				<Cell>{data.id}</Cell>
+			  	<Cell numeric>{data.ID}</Cell>
+				<!-- <Cell>{data.id}</Cell> -->
+				<Cell>{data.name}</Cell>
 				<Cell>{data.genetic}</Cell>
-				<Cell>{new Date(data.birthdate)}</Cell>
+				<Cell>{data.birthDate}</Cell>
 				<Cell>{data.weightAtBirth}</Cell>
 				<Cell>{data.fatherName}</Cell>
 				<Cell>{data.fatherGenetic}</Cell>

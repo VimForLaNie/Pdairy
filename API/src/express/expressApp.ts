@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import startRedisClient from "../Redis/redisClient";
 
 import { PrismaClient } from '@prisma/client'
-import crypto from "crypto";
 import cors from "cors";
 
 const prisma = new PrismaClient();
@@ -22,11 +21,11 @@ expressApp.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-expressApp.get('/read', async (req, res) => {
+expressApp.get('/readAll', async (req, res) => {
     res.send(await prisma.milkRecord.findMany());
 });
 
-expressApp.get('/cows', async (req, res) => {
+expressApp.get('/getCows', async (req, res) => {
     res.send(await prisma.cow.findMany());
 });
 
@@ -38,7 +37,7 @@ expressApp.get('/getMilkRecord', async (req, res) => {
     }
     const result = await prisma.milkRecord.findMany({
         where: {
-            cowId: cowID.toString(),
+            cowID: parseInt(cowID.toString()),
         },
     });
     res.send(result);
@@ -52,10 +51,10 @@ expressApp.post('/prediction',jsonParser , async (req, res) => {
     }
     const result = await prisma.cow.update({
         where: {
-            id: cowID.toString(),
+            ID: parseInt(cowID),
         },
         data: {
-            Prediction: JSON.stringify(predictions),
+            prediction: JSON.stringify(predictions),
         },
     });
     res.send(result);
@@ -67,8 +66,8 @@ expressApp.post('/forceRecord', jsonParser, async (req, res) => {
     const result = await prisma.milkRecord.create({
         data: {
             weight: weight,
-            cowId: cowID,
-            recordedAt : new Date(),
+            cowID: cowID,
+            timestamp : new Date(),
         },
     });
     console.log(result);
@@ -85,7 +84,6 @@ expressApp.post('/farm', jsonParser, async (req, res) => {
     console.log('Got body:', req.body);
     const result = await prisma.farm.create({
         data: {
-            id: crypto.randomBytes(16).toString('hex'),
             name: farmName,
             owner: owner,
         },
@@ -98,16 +96,20 @@ expressApp.post('/cow', jsonParser, async (req, res) => {
     // const apiKey = req.headers['x-api-key'];
     // if(apiKey !== process.env.API_KEY) return res.sendStatus(403);
 
-    const { cowName, farmID, id, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic } = req.body;
-    console.log('Got body:', req.body);
-    console.log(req.params);
+    const { name, farmName, birthDate, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic } = req.body;
+    // console.log('Got body:', req.body);
+    // console.log(req.params);
+    const farmID = (await prisma.farm.findFirst({
+        where : {
+            name : farmName
+        }
+    }))?.ID ?? 0
     const result = await prisma.cow.create({
         data: {
-            id: crypto.randomBytes(16).toString('hex'),
-            name: cowName,
-            farmId: farmID,
+            name: name,
+            farmID: farmID,
             genetic: genetic,
-            birthdate: new Date(),
+            birthDate: new Date(parseInt(birthDate)),
             weightAtBirth: parseFloat(weightAtBirth),
             fatherName: fatherName,
             motherName: motherName,

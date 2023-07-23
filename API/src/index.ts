@@ -29,8 +29,8 @@ setInterval(() => {
             if(typeof result === 'number' && result > 0) {
                 db.milkRecord.create({
                     data: { 
-                        cowId: key,
-                        recordedAt : new Date(),
+                        cowID: parseInt(key),
+                        timestamp : new Date(),
                         weight : result 
                     }
                 });
