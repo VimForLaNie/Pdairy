@@ -10,7 +10,7 @@ datasource db {
 model BreedingRecord {
   ID         Int      @id @default(autoincrement())
   date       DateTime @db.Timestamptz(0)
-  fatherName String   
+  fatherName String
   timestamp  DateTime @db.Timestamptz(0)
   calfGender String
   calfWeight Float
@@ -19,7 +19,7 @@ model BreedingRecord {
 }
 
 model Cow {
-  ID             Int           @id @default(autoincrement())
+  ID             Int              @id @default(autoincrement())
   name           String
   genetic        String?
   birthDate      DateTime         @db.Timestamptz(0)
@@ -31,21 +31,21 @@ model Cow {
   farmID         Int
   breedingRecord BreedingRecord[]
   prediction     Json?
-  farm           Farm            @relation(fields: [farmID], references: [ID])
+  farm           Farm             @relation(fields: [farmID], references: [ID])
   milkRecord     MilkRecord[]
 }
 
 model Farm {
-  ID    Int @id @default(autoincrement())
+  ID    Int    @id @default(autoincrement())
   name  String
   owner String
   Cow   Cow[]
 }
 
 model MilkRecord {
-  ID         Int      @id @default(autoincrement())
-  timestamp  DateTime @db.Timestamptz(0)
-  weight     Float    
-  cowID      Int
-  Cow        Cow      @relation(fields: [cowID], references: [ID])
+  ID        Int      @id @default(autoincrement())
+  timestamp DateTime @db.Timestamptz(0)
+  weight    Float
+  cowID     Int
+  Cow       Cow      @relation(fields: [cowID], references: [ID])
 }
