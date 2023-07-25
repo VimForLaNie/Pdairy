@@ -1,9 +1,16 @@
 <script lang="ts">
 	import '../app.css';
-	import CowInputField from '$lib/components/cowInputField.svelte';
+	import TabBar from '@smui/tab-bar';
 	import Tab, { Label } from '@smui/tab';
-  	import TabBar from '@smui/tab-bar';
+	import CowInputField from '$lib/components/cowInputField.svelte';
 	import CowTable from '$lib/components/cowTable.svelte';
+	import FarmInputField from '$lib/components/farmInputField.svelte';
+	import FarmTable from '$lib/components/farmTable.svelte';
+  	import MilkInputField from '$lib/components/milkInputField.svelte';
+  	import MilkTable from '$lib/components/milkTable.svelte';
+  	import BreedingInputField from '$lib/components/breedingInputField.svelte';
+
+  	export let data;
 
 	let mode = "Insert";
 	let table = 'Cow';
@@ -29,11 +36,21 @@
 	</TabBar>
 	{#if mode === 'Insert'}
 		{#if table === 'Cow'}
-			<CowInputField />
+			<CowInputField key={data.apiKey ?? ''}/>
+		{:else if table === 'Farm'}
+			<FarmInputField key={data.apiKey ?? ''}/>
+		{:else if table === 'Milk'}
+			<MilkInputField key={data.apiKey ?? ''}/>
+		{:else if table === 'Breeding'}
+			<BreedingInputField key={data.apiKey ?? ''}/>
 		{/if}
 	{:else if mode === 'View'}
 		{#if table === 'Cow'}
-			<CowTable />
+			<CowTable key={data.apiKey ?? ''}/>
+		{:else if table === 'Farm'}
+			<FarmTable key={data.apiKey ?? ''}/>
+		{:else if table === 'Milk'}
+			<MilkTable key={data.apiKey ?? ''}/>
 		{/if}
 	{/if}
 </div>

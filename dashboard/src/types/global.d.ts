@@ -2,28 +2,37 @@ export {}
 
 declare global {
     interface Cow {
-        id: string;
-        cowName: string;
-        farmId: string;
-        genetic: string;
-        birthdate: Date;
+        ID?: int;
+        name: string;
+        farmID: int;
+        genetic?: string;
+        birthDate: Date;
         weightAtBirth: number;
-        fatherName: string;
-        motherName: string;
-        fatherGenetic: string;
-        motherGenetic: string;
+        fatherName?: string;
+        motherName?: string;
+        fatherGenetic?: string;
+        motherGenetic?: string;
+    }
+
+    interface BreedingRecord {
+        ID ?: int,
+        fatherName : string,
+        timestamp : Date,
+        calfGender : string,
+        calfWeight : number,
+        motherID : int,
     }
 
     interface Farm {
-        id: string;
+        ID?: int;
         name: string;
         owner: string;
     }
 
     interface MilkRecord {
-        id: string;
-        cowId: string;
-        recordedAt: Date;
-        amount: number;
+        ID?: int;
+        cowID: int;
+        timestamp: Date;
+        weight: number;
     }
 }

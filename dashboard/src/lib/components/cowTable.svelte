@@ -1,13 +1,16 @@
 <script lang="ts">
+  import { getData } from "$lib/HTTPHelper";
     import Button, { Label } from "@smui/button";
     import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
 
+    export let key:string;
+
     const showCows = async () => {
-		cowsData = await fetch('/api/getCows').then(async res => res.json());
+		cowsData = await getData('/api/getCows',key);
 		console.log(cowsData);
 	}
 
-	let cowsData: any;
+	let cowsData:Cow[];
 </script>
 
 <Button on:click={showCows} class="mt-5" variant="outlined">

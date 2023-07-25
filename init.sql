@@ -1,7 +1,6 @@
 -- CreateTable
 CREATE TABLE "BreedingRecord" (
     "ID" SERIAL NOT NULL,
-    "date" TIMESTAMPTZ(0) NOT NULL,
     "fatherName" TEXT NOT NULL,
     "timestamp" TIMESTAMPTZ(0) NOT NULL,
     "calfGender" TEXT NOT NULL,

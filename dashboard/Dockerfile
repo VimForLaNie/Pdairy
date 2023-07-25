@@ -10,8 +10,9 @@ COPY ./dashboard/tsconfig.json ./
 # COPY ./API/prisma/ ./prisma
 COPY ./dashboard/src/ ./src
 
-# RUN npx smui-theme template src/theme
 RUN npm install
+
+# RUN npx smui-theme template src/theme
 # RUN npx prisma generate
 # RUN npm install @prisma/client
 

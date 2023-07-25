@@ -7,6 +7,8 @@
 	let birthdate:number = new Date().getTime();
 	let weightAtBirth = 0;
 
+	export let key:string;
+
     const createCow = () => {
 		const data = {
 			name: tempCow[0],
@@ -20,7 +22,7 @@
 			motherGenetic: tempCow[6]
 		}
 		// console.log(JSON.stringify(data));
-		postData('/api/cow', data);
+		postData('/api/cow', data, key);
 	}
 </script>
 
