@@ -26,16 +26,16 @@ services:
       - .env
     image: "postgres:alpine"
     # command: postgres -c config_file=/etc/postgresql.conf
-    # environment:
+    environment:
       # PGUSER: ${POSTGRES_USER}
-      # POSTGRES_DB: db
+      POSTGRES_DB: db
       # POSTGRES_PASSWORD: 123456
     volumes:
       - db:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./customPostgresql.conf:/etc/postgresql.conf
-    # ports:
-    #   - 5432:5432
+    ports:
+      - 5432:5432
     expose:
       - 5432
   redis:

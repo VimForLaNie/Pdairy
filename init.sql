@@ -1,57 +1,56 @@
 -- CreateTable
 CREATE TABLE "BreedingRecord" (
-    "id" TEXT NOT NULL,
-    "date" TIMESTAMPTZ(0) NOT NULL,
+    "ID" SERIAL NOT NULL,
     "fatherName" TEXT NOT NULL,
-    "calving" TIMESTAMPTZ(0) NOT NULL,
+    "timestamp" TIMESTAMPTZ(0) NOT NULL,
     "calfGender" TEXT NOT NULL,
     "calfWeight" DOUBLE PRECISION NOT NULL,
-    "cowId" TEXT,
+    "motherID" INTEGER,
 
-    CONSTRAINT "BreedingRecord_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "BreedingRecord_pkey" PRIMARY KEY ("ID")
 );
 
 -- CreateTable
 CREATE TABLE "Cow" (
-    "id" TEXT NOT NULL,
-    "genetic" TEXT NOT NULL,
-    "birthdate" TIMESTAMPTZ(0) NOT NULL,
-    "weightAtBirth" DOUBLE PRECISION NOT NULL,
-    "fatherName" TEXT NOT NULL,
-    "fatherGenetic" TEXT NOT NULL,
-    "motherName" TEXT NOT NULL,
-    "motherGenetic" TEXT NOT NULL,
+    "ID" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "farmId" TEXT,
-    "Prediction" JSONB,
+    "genetic" TEXT,
+    "birthDate" TIMESTAMPTZ(0) NOT NULL,
+    "weightAtBirth" DOUBLE PRECISION NOT NULL,
+    "fatherName" TEXT,
+    "fatherGenetic" TEXT,
+    "motherName" TEXT,
+    "motherGenetic" TEXT,
+    "farmID" INTEGER NOT NULL,
+    "prediction" JSONB,
 
-    CONSTRAINT "Cow_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Cow_pkey" PRIMARY KEY ("ID")
 );
 
 -- CreateTable
 CREATE TABLE "Farm" (
-    "id" TEXT NOT NULL,
+    "ID" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "owner" TEXT NOT NULL,
 
-    CONSTRAINT "Farm_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Farm_pkey" PRIMARY KEY ("ID")
 );
 
 -- CreateTable
 CREATE TABLE "MilkRecord" (
-    "id" SERIAL NOT NULL,
-    "recordedAt" TIMESTAMPTZ(0) NOT NULL,
+    "ID" SERIAL NOT NULL,
+    "timestamp" TIMESTAMPTZ(0) NOT NULL,
     "weight" DOUBLE PRECISION NOT NULL,
-    "cowId" TEXT NOT NULL,
+    "cowID" INTEGER NOT NULL,
 
-    CONSTRAINT "MilkRecord_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "MilkRecord_pkey" PRIMARY KEY ("ID")
 );
 
 -- AddForeignKey
-ALTER TABLE "BreedingRecord" ADD CONSTRAINT "BreedingRecord_cowId_fkey" FOREIGN KEY ("cowId") REFERENCES "Cow"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "BreedingRecord" ADD CONSTRAINT "BreedingRecord_motherID_fkey" FOREIGN KEY ("motherID") REFERENCES "Cow"("ID") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Cow" ADD CONSTRAINT "Cow_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Cow" ADD CONSTRAINT "Cow_farmID_fkey" FOREIGN KEY ("farmID") REFERENCES "Farm"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MilkRecord" ADD CONSTRAINT "MilkRecord_cowId_fkey" FOREIGN KEY ("cowId") REFERENCES "Cow"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "MilkRecord" ADD CONSTRAINT "MilkRecord_cowID_fkey" FOREIGN KEY ("cowID") REFERENCES "Cow"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;

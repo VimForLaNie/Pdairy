@@ -8,44 +8,43 @@ datasource db {
 }
 
 model BreedingRecord {
-  id         String   @id
-  date       DateTime @db.Timestamptz(0)
+  ID         Int      @id @default(autoincrement())
   fatherName String
-  calving    DateTime @db.Timestamptz(0)
+  timestamp  DateTime @db.Timestamptz(0)
   calfGender String
   calfWeight Float
-  cowId      String?
-  Cow        Cow?     @relation(fields: [cowId], references: [id])
+  motherID   Int?
+  Cow        Cow?     @relation(fields: [motherID], references: [ID])
 }
 
 model Cow {
-  id             String           @id
-  genetic        String
-  birthdate      DateTime         @db.Timestamptz(0)
-  weightAtBirth  Float
-  fatherName     String
-  fatherGenetic  String
-  motherName     String
-  motherGenetic  String
+  ID             Int              @id @default(autoincrement())
   name           String
-  farmId         String
-  BreedingRecord BreedingRecord[]
-  Prediction     Json?
-  Farm           Farm?            @relation(fields: [farmId], references: [id])
-  MilkRecord     MilkRecord[]
+  genetic        String?
+  birthDate      DateTime         @db.Timestamptz(0)
+  weightAtBirth  Float
+  fatherName     String?
+  fatherGenetic  String?
+  motherName     String?
+  motherGenetic  String?
+  farmID         Int
+  breedingRecord BreedingRecord[]
+  prediction     Json?
+  farm           Farm             @relation(fields: [farmID], references: [ID])
+  milkRecord     MilkRecord[]
 }
 
 model Farm {
-  id    String @id
+  ID    Int    @id @default(autoincrement())
   name  String
   owner String
   Cow   Cow[]
 }
 
 model MilkRecord {
-  id         Int      @id @default(autoincrement())
-  recordedAt DateTime @db.Timestamptz(0)
-  weight     Float
-  cowId      String
-  Cow        Cow      @relation(fields: [cowId], references: [id])
+  ID        Int      @id @default(autoincrement())
+  timestamp DateTime @db.Timestamptz(0)
+  weight    Float
+  cowID     Int
+  Cow       Cow      @relation(fields: [cowID], references: [ID])
 }

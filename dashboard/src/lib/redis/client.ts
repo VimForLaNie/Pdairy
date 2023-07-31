@@ -1,6 +1,6 @@
 import { createClient } from 'redis'
 
-export type RedisClientType = ReturnType<typeof createClient>
+type RedisClientType = ReturnType<typeof createClient>
 
 export default function startRedisClient(): RedisClientType {
     const redisClient: RedisClientType = createClient({ url: `redis://redis:6379` });
