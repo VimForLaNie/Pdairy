@@ -18,7 +18,7 @@
 
     const createBreeding = () => {
 		// console.log(JSON.stringify(data));
-		postData('/api/breedingRecord', tempBreeding, key);
+		postData('../api/breedingRecord', tempBreeding, key);
 	}
 </script>
 

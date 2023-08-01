@@ -22,7 +22,7 @@
 			motherGenetic: tempCow[6]
 		}
 		// console.log(JSON.stringify(data));
-		postData('/api/cow', data, key);
+		postData('../api/cow', data, key);
 	}
 </script>
 

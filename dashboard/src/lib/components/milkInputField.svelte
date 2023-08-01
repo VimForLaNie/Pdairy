@@ -15,7 +15,7 @@
 
     const createMilk = () => {
 		// console.log(JSON.stringify(data));
-		postData('/api/forceRecord', tempMilk, key);
+		postData('../api/forceRecord', tempMilk, key);
 	}
 </script>
 
