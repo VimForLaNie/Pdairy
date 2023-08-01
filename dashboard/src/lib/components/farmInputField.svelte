@@ -14,7 +14,7 @@
 
     const createFarm = () => {
 		// console.log(JSON.stringify(data));
-		postData('/api/farm', tempFarm, key);
+		postData('../api/farm', tempFarm, key);
 	}
 </script>
 
