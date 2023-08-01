@@ -51,6 +51,7 @@ services:
       dockerfile: ./mqtt-Dockerfile
     ports:
       - 8883:8883
+      - 1883:1883
   dashboard :
     env_file:
       - .env
