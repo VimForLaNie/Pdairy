@@ -1,67 +1,70 @@
-class Calculator {
-    rangeAroundMax = 1;
-    // numbers: number[] = [];
-    dataInterval = new Array(0);
-    
-    bucketDefect = 0;
-    noise = 0;
-    emptyBucket = 0;
-
-    constructor(noise: number,maxLoad : number, emptyBucket: number, bucketDefect: number) {
-        this.emptyBucket = emptyBucket;
-        this.bucketDefect = bucketDefect;
-        this.noise = noise;
-        this.dataInterval = new Array(Math.ceil(maxLoad / noise)).fill(0);
+class stateMachine {
+    _state:State = 0;
+    latestNumber = 0;
+    _zeroThreshold = 300.00;
+    _increasingAmount = 200.00;
+    _movingAvg:number[] = [];
+    _bucket = 0.00;
+    result = 0.00;
+    _movingAvgSize = 10;
+    constructor() {
     }
 
     addNumber(number: number) {
-        this.dataInterval[Math.floor(number / this.noise)] += 1;
-    }
-
-    showFrequency() {
-        let dataTable = new Array(this.dataInterval.length);
-        for (let i = 0; i < this.dataInterval.length; i++) {
-            dataTable[i] = new Array(2);
-            dataTable[i][1] = this.dataInterval[i];
-            dataTable[i][0] = `${i * this.noise} - ${(i + 1) * this.noise}`;
-        }
-        console.table(dataTable);
-    }
-
-    calc(){
-        let avgBucketValue = 0;
-        let sumBucketValue = 0;
-        let freqBucketValue = 0;
-        let startBucketIndex = Math.floor((this.emptyBucket - this.bucketDefect) / this.noise);
-        let endBucketIndex = Math.ceil((this.emptyBucket + this.bucketDefect) / this.noise);
-        for (let i = startBucketIndex; i < endBucketIndex; i++) {
-            sumBucketValue += this.noise*(i + 0.5)*this.dataInterval[i];
-            freqBucketValue += this.dataInterval[i];
-        }
-        avgBucketValue = sumBucketValue / freqBucketValue;
-        // console.debug(`avgBucketValue: ${avgBucketValue}`);
-
-        let maxElementIndex = 0;
-        for(let i = this.dataInterval.length; i >= 0; i--) {
-            if(this.dataInterval[i] > 0) {
-                maxElementIndex = i;
+        switch (this._state) {
+            case 0:
+                if(number > this._zeroThreshold) {
+                    this._state = 1;
+                    this._bucket = number;
+                    console.debug(`found bucket . . . ${number}`);
+                    break;
+                }
+                this.latestNumber = number;
+                console.debug(`getting zeros. . . ${number}`);
+                return -1;
+            case 1:
+                if(number < this.latestNumber + this._increasingAmount) {
+                    this._state = 2;
+                    console.debug(`slowing down. . . ${number}`);
+                }
+                else{
+                    console.debug(`filling up. . . ${number}`);
+                }
+                this.latestNumber = number;
+                return -1;
+            case 2:
+                if (number < this._zeroThreshold) {
+                    console.debug(`get back to zero . . . ${number}`);
+                    this._state = 0;
+                    return this.getResult();
+                }
+                else if(number < this.latestNumber + this._increasingAmount) {
+                    console.debug(`stablizing . . . ${number}`);
+                    this._movingAvg.push(number);
+                    if(this._movingAvg.length > this._movingAvgSize) {
+                        this._movingAvg.shift();
+                    }
+                    this.result = this._movingAvg.reduce((a, b) => a + b, 0) / this._movingAvg.length;
+                    console.log(`result: ${this.result}`);
+                    return -1;
+                }
+                else if (number < this._bucket && number > this._zeroThreshold){
+                    console.debug(`new bucket . . . ${number}`);
+                    this._state = 1;
+                    this._bucket = number;
+                    return -1;
+                }
+                else if (number > this.latestNumber + this._increasingAmount) {
+                    console.debug(`filling up(again?). . . ${number}`);
+                    this._state = 1;
+                    return -1;
+                }
                 break;
-            }
         }
-        // console.debug(`maxElementIndex: ${maxElementIndex}`)
-        let maxElementFrequency = 0;
-        let sumMaxElement = 0;
-        for(let i = maxElementIndex; i >= maxElementIndex - this.rangeAroundMax; i--) {
-            maxElementFrequency += this.dataInterval[i];
-            sumMaxElement += this.noise*(i + 0.5)*this.dataInterval[i];
-        }
-        // console.debug(`maxElementFrequency: ${maxElementFrequency}`);
-        // console.debug(`sumMaxElement: ${sumMaxElement}`);
-        let avgMaxElement = sumMaxElement / maxElementFrequency; 
-        let result = avgMaxElement - avgBucketValue;
-
-        return result;
+    }
+    getResult() {
+        return this.result - this._bucket;
     }
 }
 
-export default Calculator;
+export default stateMachine;
