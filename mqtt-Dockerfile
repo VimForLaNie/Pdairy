@@ -9,5 +9,6 @@ COPY ./password.txt /mosquitto/config/password.txt
 RUN mosquitto_passwd -U /mosquitto/config/password.txt
 
 EXPOSE 8883
+EXPOSE 1883
 
 CMD [ "mosquitto", "-c", "/mosquitto/config/mosquitto.conf" ]
