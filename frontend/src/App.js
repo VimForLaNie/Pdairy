@@ -1,14 +1,12 @@
 import './App.css';
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-import { GiHamburgerMenu, GiWhiteBook } from "react-icons/gi";
+import { GiHamburgerMenu } from "react-icons/gi";
 import { BsBellFill , BsChatDots } from "react-icons/bs";
 import Home from './page/Home';
 import User from './page/User';
 import Board from './page/Board';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import SearchBar from './components/Search';
-import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import ResponsiveAppBar from './components/Responsivebar'
 

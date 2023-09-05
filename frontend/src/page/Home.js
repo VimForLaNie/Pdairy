@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { BsBucketFill } from "react-icons/bs";
@@ -19,7 +18,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function Home() {
   return (
     <div>
-      <h2>Overview</h2>
+      <h2>Overviews</h2>
       <Grid container spacing={3}>
         <Grid item xs>
         <Item style={{ backgroundColor: 'rgb(209, 233, 252)' }}>
