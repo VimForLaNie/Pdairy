@@ -11,12 +11,6 @@ expressApp.use(cors());
 const jsonParser = bodyParser.json();
 const redisClient = startRedisClient();
 
-const noAPIkey = async (key:any) => {
-    console.log('Got key:', key);
-    const realKey = await redisClient.get('x-api-key');
-    return key !== realKey;
-}
-
 expressApp.post('/cache', jsonParser, (req, res) => {
     const { key, value } = req.body;
     console.log('Got body:', req.body);
@@ -29,23 +23,18 @@ expressApp.get('/', (req, res) => {
 });
 
 expressApp.get('/getMilkRecords', async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     res.send(await prisma.milkRecord.findMany());
 });
 
 expressApp.get('/getCows', async (req:any, res) => {
-    // console.log(`header = `,req.headers);
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     res.send(await prisma.cow.findMany());
 });
 
 expressApp.get('/getFarms', async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     res.send(await prisma.farm.findMany());
 });
 
 expressApp.get('/getMilkRecord', async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     const { cowID } = req.query;
     // console.log('Got query:', req.query);
     if (cowID === undefined) {
@@ -60,7 +49,6 @@ expressApp.get('/getMilkRecord', async (req:any, res) => {
 });
 
 expressApp.post('/prediction',jsonParser , async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     console.log('Got query:', req.body);
     const { cowID, predictions } = req.body;
     if (cowID === undefined || predictions === undefined || predictions.length === 0) {
@@ -78,7 +66,6 @@ expressApp.post('/prediction',jsonParser , async (req:any, res) => {
 });
 
 expressApp.post('/forceRecord', jsonParser, async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     const { cowID, weight, timestamp } = req.body;
     console.log('Got body:', req.body);
     const result = await prisma.milkRecord.create({
@@ -93,7 +80,6 @@ expressApp.post('/forceRecord', jsonParser, async (req:any, res) => {
 });
 
 expressApp.post('/farm', jsonParser, async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     const { name, owner } = req.body;
     console.log('Got body:', req.body);
     const result = await prisma.farm.create({
@@ -107,7 +93,6 @@ expressApp.post('/farm', jsonParser, async (req:any, res) => {
 });
 
 expressApp.post('/breedingRecord', jsonParser, async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     const { fatherName, motherID, calfGender, calfWeight, timestamp } = req.body;
     console.log('Got body:', req.body);
     const result = await prisma.breedingRecord.create({
@@ -124,7 +109,6 @@ expressApp.post('/breedingRecord', jsonParser, async (req:any, res) => {
 });
 
 expressApp.post('/cow', jsonParser, async (req:any, res) => {
-    if(await noAPIkey(req.headers['x-api-key']?.toString() ?? '')) { return res.sendStatus(403); }
     const { name, farmName, birthDate, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic } = req.body;
     // console.log('Got body:', req.body);
     // console.log(req.params);
