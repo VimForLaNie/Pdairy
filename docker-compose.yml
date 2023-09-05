@@ -83,3 +83,13 @@ services:
       - "postgres:db"
     expose:
       - 8080
+  frontend:
+    build: 
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    restart: always
+    depends_on:
+      - api
+      - postgres
+    ports:
+      - 3005:3000
