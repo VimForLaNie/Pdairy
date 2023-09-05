@@ -6,9 +6,6 @@ import expressApp from './express/expressApp';
 import mqttClient from './MQTT/mqttClient';
 import { PrismaClient } from '@prisma/client';
 import Calculator from './calculator';
-import startRedisClient from './Redis/redisClient';
-import crypto from 'crypto';
-import { machine } from 'os';
 
 const PORT = 8080;
 
@@ -21,11 +18,6 @@ const cowResult: Map<string, number> = new Map();
 const latestInput: Map<number, number> = new Map();
 
 expressApp.listen(PORT, () => console.log(`API Server listening on port ${PORT}!`));
-
-const redisClient = startRedisClient();
-let key = crypto.randomBytes(128).toString('base64');
-console.log(`key : ${key}`);
-redisClient.set('x-api-key',key);
 
 setInterval(() => {
     const now = new Date().getTime();

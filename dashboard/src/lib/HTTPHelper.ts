@@ -5,7 +5,7 @@ const postData = async (url: string, data: any, apiKey: string) => {
         body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json',
-            'x-api-key' : apiKey
+            // 'x-api-key' : apiKey
         }
     })
     .then(async (res) => {
@@ -23,7 +23,7 @@ const getData = async (url: string, apiKey: string) => {
         // body: JSON.stringify(data),
         headers: {
             // 'Content-Type': 'application/json',
-            'x-api-key' : apiKey
+            // 'x-api-key' : apiKey
         }
     })
     .then(async (res) => {
