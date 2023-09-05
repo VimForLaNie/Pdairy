@@ -115,6 +115,22 @@ expressApp.post('/feed', jsonParser, async (req:any, res) => {
     res.send(result);
 });
 
+expressApp.post('/breedingPrediction', jsonParser, async (req:any, res) => {
+    const { cowID, prediction } = req.body;
+    console.log('Got body:', req.body);
+    
+    const result = await prisma.cow.update({
+        where: {
+            ID: parseInt(cowID),
+        },
+        data: {
+            breedingPrediction: prediction,
+    }});
+
+    console.log(result);
+    res.send(result);
+});
+
 expressApp.post('/breedingRecord', jsonParser, async (req:any, res) => {
     const { fatherName, motherID, calfGender, calfWeight, timestamp } = req.body;
     console.log('Got body:', req.body);
