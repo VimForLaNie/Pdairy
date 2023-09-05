@@ -8,6 +8,24 @@ function safeGet(arr: number[], index: number) {
     }
 }
 
+function indexOfMax(arr:number[]) {
+  if (arr.length === 0) {
+    return -1; // Return -1 if the array is empty.
+  }
+
+  let max = arr[0]; // Initialize max to the first element of the array.
+  let maxIndex = 0; // Initialize maxIndex to 0.
+
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > max) {
+      max = arr[i]; // Update max if a larger element is found.
+      maxIndex = i; // Update maxIndex to the index of the larger element.
+    }
+  }
+
+  return maxIndex; // Return the index of the maximum element.
+}
+
 function longestIncreasingSubarray(arr: number[], increasingRange: number) {
     const dp = new Array(arr.length).fill(1)
     // console.log(`ir ${increasingRange}`);
@@ -17,18 +35,15 @@ function longestIncreasingSubarray(arr: number[], increasingRange: number) {
         
         for (let j = 1; j <= increasingRange; j++) {
             // console.log(`i: ${i}, j: ${j} => ${arr[i - j]} ${arr[i]}`);
-            if (safeGet(arr, i - j) <= arr[i]) {
-                isIncreasing = true;
-                maxLength = Math.max(maxLength, dp[i - j] + (j - 1));
-            }
+            if (safeGet(arr, i - j) > arr[i]) { continue; }
+            isIncreasing = true;
+            maxLength = Math.max(maxLength, dp[i - j] + (j - 1));
         }
-        if (isIncreasing) { 
-            // console.log(`increasing ! ! !`)
-            dp[i] += maxLength;
-        }
+        if (isIncreasing) { dp[i] += maxLength; }
         // console.log(`i: ${i}, arr[i]: ${arr[i]}, dp[i]: ${dp[i]}`)
     }
-    return dp;
+    let idx = indexOfMax(dp);
+    return [idx,dp[idx]];
 }
 
 class Calculator {
@@ -39,13 +54,12 @@ class Calculator {
     private resultError: number = 0;
     private increasingRange: number = 3;
     constructor() {
-
         this.cowID = -9;
         const redisClient = startRedisClient();
         this.array = [];
-        redisClient.get("deviceError").then(res => this.deviceError = parseFloat(res ?? ""))
-        redisClient.get("bucketError").then(res => this.bucketError = parseFloat(res ?? ""))
-        redisClient.get("resultError").then(res => this.resultError = parseFloat(res ?? ""))
+        redisClient.get("deviceError").then(res => this.deviceError = parseFloat(res ?? "1"))
+        redisClient.get("bucketError").then(res => this.bucketError = parseFloat(res ?? "2"))
+        redisClient.get("resultError").then(res => this.resultError = parseFloat(res ?? "3"))
         // redisClient.get("increasingRange").then(res => this.increasingRange = parseFloat(res ?? ""))
         this.increasingRange = 3;
         redisClient.quit();
@@ -58,8 +72,21 @@ class Calculator {
     add(weight: number) { this.array.push(weight); }
 
     calculate() {
-         //longest increasing subarray
-         console.table(longestIncreasingSubarray(this.array, this.increasingRange));
+        const [index, val] = longestIncreasingSubarray(this.array, this.increasingRange);
+        const start = index - val + 1;
+        const end = index;
+        let bucket = 0;
+        for(let i = start; i <= end; i++) {
+            bucket += this.array[i];
+        }
+        bucket /= val;
+        let stablizing = 0;
+        for(let i = end + 1; i < this.array.length; i++) {
+            stablizing += this.array[i];
+        }
+        stablizing /= this.array.length - end - 1;
+        const result = bucket - stablizing;
+        return result;
     }
 }
 
