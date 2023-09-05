@@ -2,8 +2,8 @@
     import { postData } from '$lib/HTTPHelper';
     import Textfield from '@smui/textfield';
     import Button, { Label } from '@smui/button';
-    const formFields = ["Cow's  Name", "Farm Name", "Cow's Genetic", "Father's Name", "Father's Genetic", "Mother's Name", "Mother's Genetic"];
-    let tempCow = ["", "", "", "", "", "", ""];
+    const formFields = ["Cow's  Name","RFID", "Farm Name", "Cow's Genetic", "Father's Name", "Father's Genetic", "Mother's Name", "Mother's Genetic"];
+    let tempCow = ["", "", "", "", "", "","", ""];
 	let birthdate:number = new Date().getTime();
 	let weightAtBirth = 0;
 
@@ -12,14 +12,15 @@
     const createCow = () => {
 		const data = {
 			name: tempCow[0],
-			farmID: tempCow[1],
-			genetic: tempCow[2],
+			RFID: tempCow[1],
+			farmID: tempCow[2],
+			genetic: tempCow[3],
 			birthDate: birthdate,
 			weightAtBirth: weightAtBirth,
-			fatherName: tempCow[3],
-			fatherGenetic: tempCow[4],
-			motherName: tempCow[5],
-			motherGenetic: tempCow[6]
+			fatherName: tempCow[4],
+			fatherGenetic: tempCow[5],
+			motherName: tempCow[6],
+			motherGenetic: tempCow[7]
 		}
 		// console.log(JSON.stringify(data));
 		postData('../api/cow', data, key);

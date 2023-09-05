@@ -13,6 +13,8 @@ CREATE TABLE "BreedingRecord" (
 -- CreateTable
 CREATE TABLE "Cow" (
     "ID" SERIAL NOT NULL,
+    "RFID" TEXT NOT NULL,
+    "feedingRecord" JSONB,
     "name" TEXT NOT NULL,
     "genetic" TEXT,
     "birthDate" TIMESTAMPTZ(0) NOT NULL,
@@ -23,6 +25,7 @@ CREATE TABLE "Cow" (
     "motherGenetic" TEXT,
     "farmID" INTEGER NOT NULL,
     "prediction" JSONB,
+    "breedingPrediction" JSONB,
 
     CONSTRAINT "Cow_pkey" PRIMARY KEY ("ID")
 );
@@ -40,11 +43,15 @@ CREATE TABLE "Farm" (
 CREATE TABLE "MilkRecord" (
     "ID" SERIAL NOT NULL,
     "timestamp" TIMESTAMPTZ(0) NOT NULL,
+    "rawData" JSONB NOT NULL,
     "weight" DOUBLE PRECISION NOT NULL,
     "cowID" INTEGER NOT NULL,
 
     CONSTRAINT "MilkRecord_pkey" PRIMARY KEY ("ID")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Cow_RFID_key" ON "Cow"("RFID");
 
 -- AddForeignKey
 ALTER TABLE "BreedingRecord" ADD CONSTRAINT "BreedingRecord_motherID_fkey" FOREIGN KEY ("motherID") REFERENCES "Cow"("ID") ON DELETE SET NULL ON UPDATE CASCADE;

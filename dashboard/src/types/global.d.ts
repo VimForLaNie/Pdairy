@@ -3,7 +3,9 @@ export {}
 declare global {
     interface Cow {
         ID?: int;
+        RFID: string;
         name: string;
+        feedingRecord: string;
         farmID: int;
         genetic?: string;
         birthDate: Date;

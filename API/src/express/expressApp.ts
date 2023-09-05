@@ -66,10 +66,11 @@ expressApp.post('/prediction',jsonParser , async (req:any, res) => {
 });
 
 expressApp.post('/forceRecord', jsonParser, async (req:any, res) => {
-    const { cowID, weight, timestamp } = req.body;
+    const { cowID, weight, timestamp, rawData } = req.body;
     console.log('Got body:', req.body);
     const result = await prisma.milkRecord.create({
         data: {
+            rawData: rawData,
             weight: weight,
             cowID: cowID,
             timestamp : timestamp,
@@ -92,6 +93,28 @@ expressApp.post('/farm', jsonParser, async (req:any, res) => {
     res.send(result);
 });
 
+expressApp.post('/feed', jsonParser, async (req:any, res) => {
+    const { cowID, newFeed } = req.body;
+    console.log('Got body:', req.body);
+    let array:any = [];
+    const currentFeedingRecord = await prisma.cow.findFirst({
+        where: {
+            ID: parseInt(cowID),
+        },
+    }).then((cow) => {
+        array = JSON.parse(cow?.feedingRecord?.toString() ?? '[]');
+    });
+    const result = await prisma.cow.update({
+        where: {
+            ID: parseInt(cowID),
+        },
+        data: {
+            feedingRecord: JSON.stringify(array),
+    }});
+    console.log(result);
+    res.send(result);
+});
+
 expressApp.post('/breedingRecord', jsonParser, async (req:any, res) => {
     const { fatherName, motherID, calfGender, calfWeight, timestamp } = req.body;
     console.log('Got body:', req.body);
@@ -109,7 +132,7 @@ expressApp.post('/breedingRecord', jsonParser, async (req:any, res) => {
 });
 
 expressApp.post('/cow', jsonParser, async (req:any, res) => {
-    const { name, farmName, birthDate, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic } = req.body;
+    const { name, RFID, farmName, birthDate, genetic, weightAtBirth, fatherName, motherName, fatherGenetic, motherGenetic } = req.body;
     // console.log('Got body:', req.body);
     // console.log(req.params);
     const farmID = (await prisma.farm.findFirst({
@@ -120,6 +143,7 @@ expressApp.post('/cow', jsonParser, async (req:any, res) => {
     const result = await prisma.cow.create({
         data: {
             name: name,
+            RFID: RFID,
             farmID: farmID,
             genetic: genetic,
             birthDate: new Date(parseInt(birthDate)),

@@ -18,20 +18,23 @@ model BreedingRecord {
 }
 
 model Cow {
-  ID             Int              @id @default(autoincrement())
-  name           String
-  genetic        String?
-  birthDate      DateTime         @db.Timestamptz(0)
-  weightAtBirth  Float
-  fatherName     String?
-  fatherGenetic  String?
-  motherName     String?
-  motherGenetic  String?
-  farmID         Int
-  breedingRecord BreedingRecord[]
-  prediction     Json?
-  farm           Farm             @relation(fields: [farmID], references: [ID])
-  milkRecord     MilkRecord[]
+  ID                 Int              @id @default(autoincrement())
+  RFID               String           @unique
+  feedingRecord      Json?
+  name               String
+  genetic            String?
+  birthDate          DateTime         @db.Timestamptz(0)
+  weightAtBirth      Float
+  fatherName         String?
+  fatherGenetic      String?
+  motherName         String?
+  motherGenetic      String?
+  farmID             Int
+  breedingRecord     BreedingRecord[]
+  prediction         Json?
+  breedingPrediction Json?
+  farm               Farm             @relation(fields: [farmID], references: [ID])
+  milkRecord         MilkRecord[]
 }
 
 model Farm {
@@ -44,6 +47,7 @@ model Farm {
 model MilkRecord {
   ID        Int      @id @default(autoincrement())
   timestamp DateTime @db.Timestamptz(0)
+  rawData   Json
   weight    Float
   cowID     Int
   Cow       Cow      @relation(fields: [cowID], references: [ID])

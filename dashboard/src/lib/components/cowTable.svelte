@@ -20,8 +20,9 @@
 <DataTable stickyHeader table$aria-label="User list" style="width: 100%;">
     <Head>
       <Row>
-        <Cell numeric>ID</Cell>
+        <Cell numeric>ID 1</Cell>
         <Cell>Name</Cell>
+        <Cell>RFID</Cell>
         <Cell>Genetic</Cell>
         <Cell>Birth Date</Cell>
         <Cell>Weight At Birth</Cell>
@@ -37,6 +38,7 @@
               <Cell numeric>{data.ID}</Cell>
             <!-- <Cell>{data.id}</Cell> -->
             <Cell>{data.name}</Cell>
+            <Cell>{data.RFID}</Cell>
             <Cell>{data.genetic}</Cell>
             <Cell>{data.birthDate}</Cell>
             <Cell>{data.weightAtBirth}</Cell>
