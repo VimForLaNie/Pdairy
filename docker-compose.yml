@@ -93,3 +93,5 @@ services:
       - postgres
     ports:
       - 3005:3000
+    expose:
+      - 3005
