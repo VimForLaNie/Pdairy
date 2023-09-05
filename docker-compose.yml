@@ -19,6 +19,7 @@ services:
     depends_on:
       - api
       - dashboard
+      - frontend
     expose:
       - 80
   postgres:
@@ -93,5 +94,3 @@ services:
       - postgres
     ports:
       - 3005:3000
-    expose:
-      - 3005
