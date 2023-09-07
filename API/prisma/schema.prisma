@@ -47,7 +47,7 @@ model Farm {
 model MilkRecord {
   ID        Int      @id @default(autoincrement())
   timestamp DateTime @db.Timestamptz(0)
-  rawData   Json
+  rawData   Json?
   weight    Float
   cowID     Int
   Cow       Cow      @relation(fields: [cowID], references: [ID])

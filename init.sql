@@ -43,7 +43,7 @@ CREATE TABLE "Farm" (
 CREATE TABLE "MilkRecord" (
     "ID" SERIAL NOT NULL,
     "timestamp" TIMESTAMPTZ(0) NOT NULL,
-    "rawData" JSONB NOT NULL,
+    "rawData" JSONB,
     "weight" DOUBLE PRECISION NOT NULL,
     "cowID" INTEGER NOT NULL,
 
