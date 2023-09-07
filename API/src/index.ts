@@ -78,7 +78,7 @@ mqttClient.on('message', async (topic, message) => {
                 },
             });
             if(cow === null) return;
-            cartToCowID.set(cartID, cow?.ID?.toString());
+            cartToCowID.set(cartID, cow.ID.toString());
             break;
     }
 });
