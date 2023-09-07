@@ -1,52 +1,63 @@
 import * as React from 'react';
+import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 
-function createData(name, calories, fat, carbs, protein, more) {
-  return { name, calories, fat, carbs, protein , more};
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+function createData(tag, date) {
+  return { tag, date};
 }
 
 const rows = [
-  createData('Pooh', 159, 6.0, 24, 4.0, "https://www.facebook.com/"),
-  createData('Grittin', 237, 9.0, 37, 4.3, "https://www.google.com/"),
-  createData('Run', 262, 16.0, 24, 6.0, "https://www.youtube.com/")
+  createData("#1234", "19/06/58"),
+  createData("#5678", "19/06/58"),
+  createData("#8888", "19/06/58"),
+  createData("#3253", "19/06/58"),
+  createData("#7648", "19/06/58"),
 ];
 
 export default function BasicTable() {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <TableCell>Cow Name</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-            <TableCell align="right">More info&nbsp;</TableCell>
+            <StyledTableCell align='center'>Tag Cow</StyledTableCell>
+            <StyledTableCell align="center">Date</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">{row.name}</TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-              <TableCell align="right"><Button variant="contained" size="small" color="success" href={row.more}>
-                More
-              </Button></TableCell>
-            </TableRow>
+            <StyledTableRow key={row.tag}>
+              <StyledTableCell component="th" scope="row" align='center'>
+                {row.tag}
+              </StyledTableCell>
+              <StyledTableCell align="center">{row.date}</StyledTableCell>
+            </StyledTableRow>
           ))}
         </TableBody>
       </Table>

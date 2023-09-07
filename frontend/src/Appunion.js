@@ -1,14 +1,16 @@
-import './App.css';
+import './Appunion.css';
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import { GiHamburgerMenu } from "react-icons/gi";
-import Homefarmer from './page/Homefarmer';
+import { BsBellFill , BsChatDots } from "react-icons/bs";
+import Homeunion from './page/Homeunion';
 import User from './page/User';
 import Board from './page/Board';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Stack from '@mui/material/Stack';
 
 
-function App() {
+function Appunion() {
   const [showNav, setShowNav] = useState(false);
   
   const toggleNav = () => {
@@ -18,18 +20,22 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <div style={{backgroundColor:"#024e9f" , textAlign:"center",height:"fit-content",fontSize:"28px",padding:"10px"}}>P'daily</div>
         <header>
-          <GiHamburgerMenu onClick={toggleNav} style={{ cursor: "pointer" ,color:"#024e9f"}}/>
+          <GiHamburgerMenu onClick={toggleNav} style={{ cursor: "pointer"}}/>
           <div className='goright'></div>
+          <Stack direction="row" spacing={2}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <BsBellFill size={20} style={{ margin: '10px' }} />
+            <BsChatDots size={20} style={{ margin: '10px' }} />
+          </div>
+          </Stack>
         </header>
         <Navbar show={showNav} />
         <div className='main'>
           <Routes>
             <Route path="/" element={<User />} />
             <Route path="/user" element={<User />} />
-            <Route path="/board" element={<Board />} />
-            <Route path="/homefarmer" element={<Homefarmer />} />
+            <Route path="/homeunion" element={<Homeunion />} />
           </Routes>
         </div>
       </Router>
@@ -37,4 +43,4 @@ function App() {
   );
 }
 
-export default App;
+export default Appunion;
