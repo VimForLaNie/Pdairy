@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import cow from './cow.png';
-import { BsFillPersonFill } from "react-icons/bs";
 import { BiHomeAlt } from "react-icons/bi";
 import { LuClipboardList } from "react-icons/lu";
 
@@ -15,9 +14,6 @@ const Navbar = ({ show }) => {
                 </li>
                 <li>
                     <Link to='/Board'><LuClipboardList/> Board</Link>
-                </li>
-                <li>
-                    <Link to='/Homefarmer'><BsFillPersonFill/> Income</Link>
                 </li>
             </ul>
         </div>

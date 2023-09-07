@@ -1,14 +1,9 @@
 body {
-  min-height: 100vh;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color:rgb(255, 255, 255);
-}
-
-.App {
-  background-color: rgb(255, 255, 255);
 }
 
 .goright {
@@ -17,28 +12,22 @@ body {
 }
 
 header {
-  padding: 10px;
-  background-color: #ffffff;
+  padding: 30px;
+  background-color: hsl(0, 0%, 0%);
   height: 40px;
   align-items: center;
   display: flex;
   flex-direction: row;
-  box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.37);
--webkit-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.37);
--moz-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.37);
 }
 
 .sidenav {
   z-index: 10;
   width:18vh;
-  background-color: #024e9f;
+  background-color: rgb(0, 0, 0);
   position: absolute;
   height: 100vh;
   padding: 0 5px;
   left: -100%;
-  box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.37);
--webkit-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.37);
--moz-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.37);
   transition: all 0.3s;
 }
 
