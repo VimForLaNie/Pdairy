@@ -1,14 +1,46 @@
 <script lang="ts">
   import { getData } from "$lib/HTTPHelper";
-    import Button, { Label } from "@smui/button";
-    import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
+  import Button, { Label } from "@smui/button";
+  import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
+  import Graph from "$lib/components/Chart.svelte";
 
-    export let key:string;
+  export let key:string;
 
-    const showMilk = async () => {
+  const showMilk = async () => {
 		milkData = await getData('/api/getMilkRecords',key);
 		console.log(milkData);
 	}
+
+  const toGraphData = (rawData:any[]) => {
+    if(rawData === null) return {};
+    const chartLabels = rawData.map((data) => data.timestamp);
+    const graphData = rawData.map((data) => data.value);
+    return {
+      labels: chartLabels,
+      datasets: [
+      {
+        label: 'Milk',
+        fill: true,
+        lineTension: 0.3,
+        backgroundColor: 'rgba(225, 204,230, .3)',
+        borderColor: 'rgb(205, 130, 158)',
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: 'rgb(205, 130,1 58)',
+        pointBackgroundColor: 'rgb(255, 255, 255)',
+        pointBorderWidth: 10,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: 'rgb(0, 0, 0)',
+        pointHoverBorderColor: 'rgba(220, 220, 220,1)',
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10,
+        data: graphData,
+      },],
+    }
+  }
 
 	let milkData:MilkRecord[];
 </script>
@@ -24,6 +56,8 @@
         <Cell>Cow's ID</Cell>
         <Cell>Timestamp</Cell>
         <Cell>weight</Cell>
+        <Cell>Raw Data</Cell>
+        <Cell>Chart</Cell>
       </Row>
     </Head>
     <Body>
@@ -33,6 +67,7 @@
             <Cell>{data.cowID}</Cell>
             <Cell>{data.timestamp}</Cell>
             <Cell>{data.weight}</Cell>
+            <Cell><Graph data={toGraphData(JSON.parse(data.rawData))}/></Cell>
         </Row>
       {/each}
     </Body>
