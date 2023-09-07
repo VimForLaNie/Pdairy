@@ -71,8 +71,14 @@ mqttClient.on('message', async (topic, message) => {
             // latestInput.set(currentCow,new Date().getTime());
             break;
         case 'setCowID':
-            const cowID = message.toString();
-            cartToCowID.set(cartID, cowID);
+            const RFID = message.toString();
+            const cow = await db.cow.findFirst({
+                where: {
+                    RFID: RFID,
+                },
+            });
+            if(cow === null) return;
+            cartToCowID.set(cartID, cow?.ID?.toString());
             break;
     }
 });
