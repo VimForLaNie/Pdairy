@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Navbarunion from './components/Navbarunion';
 import { GiHamburgerMenu } from "react-icons/gi";
 import Homefarmer from './page/Homefarmer';
-import User from './page/User';
+import User from './User';
 import Board from './page/Board';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
