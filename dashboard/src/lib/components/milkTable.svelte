@@ -61,7 +61,7 @@
       </Row>
     </Head>
     <Body>
-      {#each milkData as data, index}
+      {#each milkData.reverse() as data, index}
         <Row>
             <Cell numeric>{data.ID}</Cell>
             <Cell>{data.cowID}</Cell>
