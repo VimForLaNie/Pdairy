@@ -6,7 +6,7 @@
     export let key:string;
 
     const showFarms = async () => {
-		farmsData = await getData('/api/getFarms',key);
+		farmsData = await getData('../api/getFarms',key);
 		console.log(farmsData);
 	}
 

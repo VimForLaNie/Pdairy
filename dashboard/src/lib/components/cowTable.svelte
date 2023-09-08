@@ -6,7 +6,7 @@
     export let key:string;
 
     const showCows = async () => {
-		cowsData = await getData('/api/getCows',key);
+		cowsData = await getData('../api/getCows',key);
 		console.log(cowsData);
 	}
 
@@ -35,7 +35,7 @@
     <Body>
       {#each cowsData as data, index}
         <Row>
-              <Cell numeric>{data.ID}</Cell>
+            <Cell numeric>{data.ID}</Cell>
             <!-- <Cell>{data.id}</Cell> -->
             <Cell>{data.name}</Cell>
             <Cell>{data.RFID}</Cell>

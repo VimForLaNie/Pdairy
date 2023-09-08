@@ -8,9 +8,11 @@ COPY ./dashboard/*.config.ts ./
 COPY ./dashboard/*.config.js ./
 COPY ./dashboard/tsconfig.json ./
 # COPY ./API/prisma/ ./prisma
+COPY ./dashboard/src/theme/ ./src/theme
+RUN npm install
+
 COPY ./dashboard/src/ ./src
 
-RUN npm install
 
 # RUN npx smui-theme template src/theme
 # RUN npx prisma generate
