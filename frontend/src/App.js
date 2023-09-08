@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useState } from 'react';
-import Navbar from './components/Navbar';
+import Navbarunion from './components/Navbarunion';
 import { GiHamburgerMenu } from "react-icons/gi";
 import Homefarmer from './page/Homefarmer';
 import User from './page/User';
@@ -18,12 +18,12 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <div style={{backgroundColor:"#024e9f" , textAlign:"center",height:"fit-content",fontSize:"28px",padding:"10px"}}>P'daily</div>
+        <div style={{backgroundColor:"#024e9f" , textAlign:"center",height:"fit-content",fontSize:"28px",padding:"10px", fontWeight: 'bold'}}>P'dairy</div>
         <header>
           <GiHamburgerMenu onClick={toggleNav} style={{ cursor: "pointer" ,color:"#024e9f"}}/>
           <div className='goright'></div>
         </header>
-        <Navbar show={showNav} />
+        <Navbarunion show={showNav} />
         <div className='main'>
           <Routes>
             <Route path="/" element={<User />} />
