@@ -4,7 +4,7 @@ import cow from './cow.png';
 import { BiHomeAlt } from "react-icons/bi";
 import { LuClipboardList } from "react-icons/lu";
 
-const Navbar = ({ show }) => {
+const Navbarunion = ({ show }) => {
     return (
         <div className={show ? 'sidenav active' : 'sidenav'}>
             <h2><img src={cow} alt='Cow' className='cow'/> P'Daily</h2>
@@ -13,11 +13,11 @@ const Navbar = ({ show }) => {
                     <Link to="/User"><BiHomeAlt/> My-Profile</Link>
                 </li>
                 <li>
-                    <Link to='/Board'><LuClipboardList/> Board</Link>
+                    <Link to='/Homeunion'><LuClipboardList/> Milk-Cow</Link>
                 </li>
             </ul>
         </div>
     )
 }
 
-export default Navbar;
+export default Navbarunion;

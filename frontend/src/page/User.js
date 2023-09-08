@@ -81,9 +81,6 @@ export default function SignIn() {
             alignItems: 'center',
           }}
         >
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
           {loginStatus === 'Success' ? (
             <Box>
               <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 200, height: 200 }}>
@@ -103,6 +100,9 @@ export default function SignIn() {
             </Box>
           ) : (
             <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <div style={{textAlign:"center",fontSize:"36px"}}>
+                Sign in
+              </div>
               <TextField
                 margin="normal"
                 required

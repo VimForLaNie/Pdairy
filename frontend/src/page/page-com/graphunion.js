@@ -1,23 +1,25 @@
 import React from 'react'
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-
+import './graph.css'
 const data = [
-  { label: 'January', sales: 21, leads: 141 },
-  { label: 'February', sales: 35, leads: 79 },
-  { label: 'March', sales: 75, leads: 57 },
-  { label: 'April', sales: 51, leads: 47 },
-  { label: 'May', sales: 41, leads: 63 },
-  { label: 'June', sales: 47, leads: 71 }
+  { label: 'Jan', real: 21, predict: 21 },
+  { label: 'Feb', real: 35, predict: 35 },
+  { label: 'Mar', real: 75, predict: 57 },
+  { label: 'Apr', real: 51, predict: 55 },
+  { label: 'May', real: 41, predict: 63 },
+  { label: 'Jun', real: 47, predict: 71 }
 ];
 
-export default function Graphunion() {
+export default function Graphfarmer() {
   return (
     <div className="row">
       <div className="col-md-12">
-        <h2>Charts with recharts library</h2>
+        <h1></h1>
+        <div className="textshadow" style={{ fontFamily: 'Athiti, sans-serif', fontWeight: 'bold',fontSize:'36px'}}>กราฟแสดงจำนวนน้ำนมต่อเดือน</div>
+        <h2></h2>
       </div>
       <div className="section col-md-6">
-        <h3 className="section-title">Line Chart</h3>
+      <div className="section-title">Milk (ml.)</div>
         <div className="section-content">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data} margin={{ top: 15, right: 15, bottom: 15, left: 0 }}>
@@ -26,8 +28,8 @@ export default function Graphunion() {
               <YAxis fontSize={20}/>
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <Legend/>
-              <Line type="monotone" dataKey="sales" stroke="#FB8833" />
-              <Line type="monotone" dataKey="leads" stroke="#17A8F5" />
+              <Line type="monotone" dataKey="real" stroke="#237bba" />
+              <Line type="monotone" dataKey="predict" stroke="#8f9090" />
             </LineChart>
           </ResponsiveContainer>
         </div>

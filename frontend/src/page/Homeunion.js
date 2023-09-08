@@ -17,7 +17,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function Homeunion() {
   return (
     <div>
-      <h2>Overview</h2>
+      <h2 className="textshadow">Overview</h2>
       <Grid container spacing={3}>
         <Grid item xs>
         <Item style={{ backgroundColor: 'rgb(209, 233, 252)' }}>
@@ -30,7 +30,7 @@ export default function Homeunion() {
           <Item style={{ backgroundColor: 'rgb(208, 242, 255)' }}><GiCow size={30} /><div style={{fontSize: '30px', fontWeight: 'bold'}}>100K</div><div>Milk/day</div></Item>
         </Grid>
         <Grid item xs>
-          <Item style={{ backgroundColor: 'rgb(255, 247, 205)' }}><LuMilk size={30} /><div style={{fontSize: '30px', fontWeight: 'bold'}}>100K</div><div>Total Cow</div></Item>
+          <Item style={{ backgroundColor: 'rgb(255, 247, 205)' }}><LuMilk size={30} /><div style={{fontSize: '30px', fontWeight: 'bold'}}>100K</div><div>Total Farmer</div></Item>
         </Grid>
       </Grid>
       <Graphunion/>
