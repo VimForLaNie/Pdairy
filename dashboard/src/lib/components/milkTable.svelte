@@ -7,13 +7,15 @@
   export let key:string;
 
   const showMilk = async () => {
-		milkData = await getData('/api/getMilkRecords',key);
-		console.log(milkData);
+		milkData = await getData('../api/getMilkRecords',key);
+		// console.log(milkData);
 	}
 
   const toGraphData = (rawData:any[]) => {
-    if(rawData === null) return {};
-    const chartLabels = rawData.map((data) => data.timestamp);
+    if(rawData == null || Object.keys(rawData).length === 0) return {};
+    const timestamps = rawData.map((data) => data.timestamp);
+    const timeMin = Math.min(...timestamps);
+    const chartLabels = timestamps.map((data) => (data - timeMin) / 1000);
     const graphData = rawData.map((data) => data.value);
     return {
       labels: chartLabels,
@@ -42,7 +44,7 @@
     }
   }
 
-	let milkData:MilkRecord[];
+	let milkData:MilkRecord[] = [];
 </script>
 
 <Button on:click={showMilk} class="mt-5" variant="outlined">
@@ -57,17 +59,16 @@
         <Cell>Timestamp</Cell>
         <Cell>weight</Cell>
         <Cell>Raw Data</Cell>
-        <Cell>Chart</Cell>
       </Row>
     </Head>
     <Body>
-      {#each milkData as data, index}
+      {#each milkData.reverse() as data, index}
         <Row>
             <Cell numeric>{data.ID}</Cell>
             <Cell>{data.cowID}</Cell>
             <Cell>{data.timestamp}</Cell>
             <Cell>{data.weight}</Cell>
-            <Cell><Graph data={toGraphData(JSON.parse(data.rawData))}/></Cell>
+            <Cell><Graph data={toGraphData(JSON.parse(data.rawData ?? "{}"))}/></Cell>
         </Row>
       {/each}
     </Body>

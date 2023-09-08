@@ -36,6 +36,6 @@ declare global {
         cowID: int;
         timestamp: Date;
         weight: number;
-        rawData: string;
+        rawData?: string;
     }
 }
