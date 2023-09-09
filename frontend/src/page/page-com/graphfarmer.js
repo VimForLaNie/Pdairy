@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import './graph.css'
+
 const data = [
   { label: 'Jan', real: 21, predict: 21 },
   { label: 'Feb', real: 35, predict: 35 },
