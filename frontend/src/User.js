@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -21,33 +21,32 @@ const listuser = [
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const [loginStatus, setLoginStatus] = React.useState(localStorage.getItem('loginStatus') || null);
-  const [userImage, setUserImage] = React.useState(localStorage.getItem('userImage') || '');
+  const [loginStatus, setLoginStatus] = useState(localStorage.getItem('loginStatus') || null);
+  const [userImage, setUserImage] = useState(localStorage.getItem('userImage') || '');
 
   const handleLogout = () => {
     localStorage.removeItem('loginStatus');
-    localStorage.removeItem('userImage'); // Remove the stored userImage
+    localStorage.removeItem('userImage');
     setLoginStatus(null);
     setUserImage('');
+    window.location.reload(); 
   };
 
   const getRandomUserImage = () => {
     const storedUserImage = localStorage.getItem('userImage');
     if (storedUserImage) {
-      // If userImage is already stored, use it
       setUserImage(storedUserImage);
     } else {
-      // Otherwise, generate a random user image
       const randomIndex = Math.floor(Math.random() * imganimal.length);
       const newUserImage = imganimal[randomIndex];
       setUserImage(newUserImage);
-      localStorage.setItem('userImage', newUserImage); // Store the userImage
+      localStorage.setItem('userImage', newUserImage);
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getRandomUserImage();
-  }, []); // Get a random user image when the component mounts
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -61,15 +60,15 @@ export default function SignIn() {
 
     if (matchingUser) {
       setLoginStatus('Success');
-      console.log('Success');
       localStorage.setItem('loginStatus', 'Success');
+      localStorage.setItem('statuss', enteredUserId[0] === 'f' ? 'farmer' : 'union');
+      window.location.reload(); 
     } else {
       setLoginStatus('Fail');
-      console.log('Failed');
       localStorage.setItem('loginStatus', 'Fail');
     }
   };
-
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -86,23 +85,38 @@ export default function SignIn() {
               <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 200, height: 200 }}>
                 <img src={userImage} alt="User" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </Avatar>
-              <Typography variant="h6" color="primary">
-                <div style={{ textAlign: 'center' }}>Success</div>
+              <Typography variant="h6" color="primary" align="center">
+                <div>Welcome, User</div>
+                <div>{localStorage.getItem("statuss") === "farmer" ? "Farmer" : "Union"}</div>
               </Typography>
+
               <Button
                 onClick={handleLogout}
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 2, mb: 2 }}
               >
                 Logout
               </Button>
             </Box>
           ) : (
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-              <div style={{textAlign:"center",fontSize:"36px"}}>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{
+                mt: 1,
+                border: '1px solid #000',
+                padding: '15px',
+                borderRadius: '10px',
+                boxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
+                WebkitBoxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
+                MozBoxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
+              }}
+            >
+              <Typography variant="h3" align="center" sx={{ color: 'black' }}>
                 Sign in
-              </div>
+              </Typography>
               <TextField
                 margin="normal"
                 required
@@ -112,6 +126,9 @@ export default function SignIn() {
                 name="userid"
                 autoComplete="userid"
                 autoFocus
+                inputProps={{
+                  'aria-label': 'User ID',
+                }}
               />
               <TextField
                 margin="normal"
@@ -122,6 +139,9 @@ export default function SignIn() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                inputProps={{
+                  'aria-label': 'Password',
+                }}
               />
               <Button
                 type="submit"
@@ -133,7 +153,7 @@ export default function SignIn() {
               </Button>
               {loginStatus === 'Fail' && (
                 <Typography variant="body2" color="error" align="center">
-                  กรอกรหัสให้ถูกต้อง.
+                  Incorrect User ID or Password. Please try again.
                 </Typography>
               )}
             </Box>
