@@ -1,60 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import './graph.css'
-import * as moment from 'moment';
-// const data = [
-//   { label: 'Jan', real: 21, predict: 21 },
-//   { label: 'Feb', real: 35, predict: 35 },
-//   { label: 'Mar', real: 75, predict: 57 },
-//   { label: 'Apr', real: 51, predict: 55 },
-//   { label: 'May', real: 41, predict: 63 },
-//   { label: 'Jun', real: 47, predict: 71 }
-// ];
+import './graph.css';
+import moment from 'moment';
 
-export default function Graphfarmer() {
-  const [users, setUsers] = useState([])
+export default function Graphunion() {
+  const [users, setUsers] = useState([]);
+
 const fetchUserData = () => {
   fetch("../api/getMilkRecords/")
     .then(async (response) => {
-      const result = await response.json()
+      const result = await response.json();
       console.log(result);
-      const graphdata = result.map((data) => { const datetime = moment(data.timestamp, "YYYYMMDD").calendar(); return { 
-        label: datetime, 
-        real: data.weight,
-      }})
-      console.log(graphdata);
-      return graphdata;
+
+      // Create an object to store the aggregated data
+      const aggregatedData = {};
+
+      result.forEach((data) => {
+        const datetime = moment(data.timestamp).format("DD-MM-YYYY");
+
+        if (aggregatedData[datetime]) {
+          aggregatedData[datetime].sumweight += data.weight;
+        } else {
+          aggregatedData[datetime] = {
+            label: datetime,
+            real: data.weight,
+            sumweight: data.weight,
+          };
+        }
+      });
+
+      // Convert the aggregatedData object into an array
+      const formattedData = Object.values(aggregatedData);
+
+      console.log(formattedData);
+      return formattedData;
     })
-    .then(data => {
-      setUsers(data)
+    .then((data) => {
+      setUsers(data);
     })
-}
-useEffect(() => {
-  fetchUserData()
-}, [])
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+};
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   return (
     <div className="row">
       <div className="col-md-12">
         <h1></h1>
-        <div className="textshadow" style={{ fontFamily: 'Athiti, sans-serif', fontWeight: 'bold',fontSize:'36px'}}>กราฟแสดงจำนวนน้ำนมต่อเดือน</div>
+        <div className="textshadow" style={{ fontFamily: 'Athiti, sans-serif', fontWeight: 'bold', fontSize: '36px' }}>กราฟแสดงจำนวนน้ำนมต่อวัน</div>
         <h2></h2>
       </div>
       <div className="section col-md-6">
-      <div className="section-title">Milk (ml.)</div>
+        <div className="section-title">Milk (ml.)</div>
         <div className="section-content">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={users} margin={{ top: 15, right: 15, bottom: 15, left: 0 }}>
               <Tooltip />
-              <XAxis dataKey="label" fontSize={20}/>
-              <YAxis fontSize={20}/>
+              <XAxis dataKey="label" fontSize={16} />
+              <YAxis fontSize={16} />
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <Legend/>
-              <Line type="monotone" dataKey="real" stroke="#237bba" />
-              <Line type="monotone" dataKey="predict" stroke="#8f9090" />
+              <Legend />
+              <Line type="monotone" dataKey="sumweight" stroke="#237bba" />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
     </div>
-  )
+  );
 }
