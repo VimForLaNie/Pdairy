@@ -106,4 +106,4 @@ def optimize():
     return jsonify(optimal_lags.tolist())
 
 if __name__ == '__main__':
-    app.run(port=port, debug=debug)
+    app.run("0.0.0.0", port=port, debug=debug)
