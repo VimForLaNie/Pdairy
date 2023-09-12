@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:latest
+FROM python:3.9
 ENV PORT 3000
 ENV DEBUG 0
 RUN apt-get update && apt-get install -y
