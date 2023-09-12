@@ -7,6 +7,26 @@ import mqttClient from './MQTT/mqttClient';
 import { PrismaClient } from '@prisma/client';
 // import Calculator from './calculator';
 
+const postData = async (url: string, data: any, apiKey: string) => {
+    console.log('postData', url, data, apiKey);
+    return fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            "data": data,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            // 'x-api-key' : apiKey
+        }
+    })
+        .then(async (res) => {
+            const result = await res.json()
+            console.log(`Result : `, result)
+            return result
+        })
+        .catch(err => console.log(err));
+}
+
 const PORT = 8080;
 
 const db = new PrismaClient();
@@ -23,7 +43,7 @@ setInterval(() => {
     const now = new Date().getTime();
     latestInput.forEach((lastInputTime, cowID) => {
         if (now - lastInputTime < 60 * 1000) return;
-        console.log("Cow : ",cowID," is done");
+        console.log("Cow : ", cowID, " is done");
         const data = cowRawData.get(cowID.toString()) ?? [];
         db.milkRecord.create({
             data: {
@@ -33,6 +53,17 @@ setInterval(() => {
                 timestamp: new Date(),
             },
         }).then(cow => console.log(cow));
+
+        postData("../ai/predict_milk", data, '').then((result) => {
+            db.cow.update({
+                where: {
+                    ID: parseInt(cowID.toString()),
+                },
+                data: {
+                    prediction: JSON.stringify(result),
+                },
+            })
+        });
         latestInput.delete(cowID);
     });
 }, 10 * 1000);
@@ -53,19 +84,20 @@ mqttClient.on('connect', () => {
 
 mqttClient.on('message', async (topic, message) => {
     console.log(message.toString());
-    const [ prefix, cartID ] = topic.split('/');
+    const [prefix, cartID] = topic.split('/');
     switch (prefix) {
         case 'record':
-            const data = {
-                "value" : parseFloat(message.toString()),
-                "timestamp" : new Date().getTime(),
-            };
-            console.log("Data : ",data);
             if (isNaN(parseFloat(message.toString()))) return;
             if (!cartToCowID.has(cartID)) return;
-            let currentCowData = [...(cowRawData.get(cartToCowID.get(cartID) ?? '') ?? []), data];
-            cowRawData.set(cartToCowID.get(cartID) ?? '', currentCowData);
-            console.log("Cow : ",cartToCowID.get(cartID) ?? '',currentCowData);
+            let cowID = cartToCowID.get(cartID) ?? '';
+            const data = {
+                "value": parseFloat(message.toString()),
+                "timestamp": new Date().getTime(),
+            };
+            const currentCowData = (cowRawData.get(cartToCowID.get(cartID) ?? '')) ?? [];
+            const newCowData = [...currentCowData, data];
+            cowRawData.set(cowID, newCowData);
+            console.log("Cow : ", cowID, newCowData);
             // let currentMachine: Calculator;
             // if (!machineList.has(cartID)) {
             //     currentMachine = new Calculator()
@@ -75,7 +107,7 @@ mqttClient.on('message', async (topic, message) => {
             // currentMachine.add(data);
             // let currentCow = currentMachine.getCowID();
             // if(currentCow == null) return;
-            latestInput.set(cartToCowID.get(cartID) ?? '',new Date().getTime());
+            latestInput.set(cowID, new Date().getTime());
             break;
         case 'setCowID':
             const RFID = message.toString();
@@ -84,9 +116,9 @@ mqttClient.on('message', async (topic, message) => {
                     RFID: RFID,
                 },
             });
-            console.log("Searching for cow => ",cow);
-            if(cow === null) return;
-            console.log("Cow : ",cow," is on cart ",cartID);
+            console.log("Searching for cow => ", cow);
+            if (cow === null) return;
+            console.log("Cow : ", cow, " is on cart ", cartID);
             cartToCowID.set(cartID, cow.ID.toString());
             break;
     }
