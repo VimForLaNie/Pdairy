@@ -106,7 +106,18 @@ export default function SignIn() {
           }}
         >
           {loginStatus === 'Success' ? (
-            <Box>
+            <Box
+            sx={{
+              mt: '80px',
+              // border: '1px solid #000',
+              padding: '15px',
+              borderRadius: '10px',
+              boxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
+              WebkitBoxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
+              MozBoxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
+              backgroundColor:'white'
+            }}
+            >
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
   <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 200, height: 200 }}>
     <img src={userImage} alt="User" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -130,7 +141,7 @@ export default function SignIn() {
               onSubmit={handleSubmit}
               noValidate
               sx={{
-                mt: '80px',
+                mt: '60px',
                 // border: '1px solid #000',
                 padding: '15px',
                 borderRadius: '10px',
@@ -186,7 +197,7 @@ export default function SignIn() {
             </Box>
             </>
           )}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '25vh' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '30vh' }}>
   <img src={island} style={{ height: '230px', width: '280px' }} alt="Island" />
 </div>
         </Box>
