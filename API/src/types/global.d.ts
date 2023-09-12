@@ -1,6 +1,8 @@
 export {};
 
 declare global {
-  type State = 0 | 1 | 2;
-  type maybeResult = number | undefined | -1;
+  interface RawData {
+    value: number;
+    timestamp: number;
+  }
 }
