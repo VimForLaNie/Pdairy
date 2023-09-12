@@ -6,4 +6,4 @@ WORKDIR /usr/src/ai
 COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN unzip -o model_save.zip
-CMD ["python", "main.py"]
+CMD gunicorn -b 0.0.0.0:$PORT main:app
