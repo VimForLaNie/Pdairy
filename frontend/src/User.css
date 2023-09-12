@@ -7,4 +7,16 @@
     margin: 10vh auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-  
+body {
+    height: 100vh;
+}
+.blocking {
+    padding: 10px;
+    background-color: #f7f6f6;
+    width: 20%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: 10px;
+}

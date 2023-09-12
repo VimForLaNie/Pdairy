@@ -51,7 +51,7 @@ const fetchUserData = () => {
     <div className="row">
       <div className="col-md-12">
         <h1></h1>
-        <div className="textshadow" style={{ fontFamily: 'Athiti, sans-serif', fontWeight: 'bold', fontSize: '36px' }}>กราฟแสดงจำนวนน้ำนมต่อวัน</div>
+        <div style={{ fontFamily: 'Athiti, sans-serif', fontWeight: 'bold', fontSize: '36px' }}>กราฟแสดงจำนวนน้ำนมต่อวัน</div>
         <h2></h2>
       </div>
       <div className="section col-md-6">

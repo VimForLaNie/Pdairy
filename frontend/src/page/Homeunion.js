@@ -17,7 +17,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function Homeunion() {
   return (
     <div>
-      <h2 className="textshadow">Overview</h2>
+      <h2>Overview</h2>
       <Grid container spacing={3}>
         <Grid item xs>
         <Item style={{ backgroundColor: 'rgb(209, 233, 252)' }}>

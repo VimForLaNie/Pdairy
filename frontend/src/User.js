@@ -6,6 +6,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { GiHamburgerMenu } from "react-icons/gi";
+import './User.css';
+import island from "./pic/Island.png";
 
 const imganimal = [
   'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554_640.jpg',
@@ -29,7 +32,7 @@ export default function SignIn() {
     localStorage.removeItem('userImage');
     setLoginStatus(null);
     setUserImage('');
-    window.location.reload(); 
+    window.location.reload();
   };
 
   const getRandomUserImage = () => {
@@ -70,50 +73,74 @@ export default function SignIn() {
   };
   
   return (
+    <>
     <ThemeProvider theme={defaultTheme}>
+      <div /*className="background-image" style={{ backgroundImage: `url(${bglogin})` ,backgroundRepeat:"no-repeat",backgroundSize:"cover", 
+    height:"100vh",backgroundPosition: "center center"}}*/style={{backgroundColor:"#f7f6f6",height:"100vh"}}>
+      {loginStatus !== 'Success' ? (
+  <>
+    <div
+      style={{
+        backgroundColor: "#024e9f",
+        textAlign: "center",
+        height: "fit-content",
+        fontSize: "28px",
+        padding: "10px",
+        fontWeight: 'bold'
+      }}
+    >
+      P'dairy
+    </div>
+    <header>
+      <GiHamburgerMenu style={{ cursor: "pointer", color: "#024e9f" }} />
+    </header>
+  </>
+) :<></>}
+
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            // mt: '80px',
+            // border: '1px solid #000',
+            padding: '15px',
           }}
         >
           {loginStatus === 'Success' ? (
             <Box>
-              <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 200, height: 200 }}>
-                <img src={userImage} alt="User" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </Avatar>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 200, height: 200 }}>
+    <img src={userImage} alt="User" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+  </Avatar>
+</div>
               <Typography variant="h6" color="primary" align="center">
                 <div>Welcome, User</div>
                 <div>{localStorage.getItem("statuss") === "farmer" ? "Farmer" : "Union"}</div>
               </Typography>
 
-              <Button
-                onClick={handleLogout}
-                fullWidth
-                variant="contained"
-                sx={{ mt: 2, mb: 2 }}
-              >
-                Logout
-              </Button>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <Button onClick={handleLogout} variant="contained" sx={{ mt: 2, mb: 2 }}>
+    Logout
+  </Button>
+</div>
             </Box>
           ) : (
+            <>
             <Box
               component="form"
               onSubmit={handleSubmit}
               noValidate
               sx={{
-                mt: 1,
-                border: '1px solid #000',
+                mt: '80px',
+                // border: '1px solid #000',
                 padding: '15px',
                 borderRadius: '10px',
                 boxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
                 WebkitBoxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
                 MozBoxShadow: '7px 7px 15px -1px rgba(0, 0, 0, 0.81)',
+                backgroundColor:'white'
               }}
             >
+              
               <Typography variant="h3" align="center" sx={{ color: 'black' }}>
                 Sign in
               </Typography>
@@ -157,9 +184,15 @@ export default function SignIn() {
                 </Typography>
               )}
             </Box>
+            </>
           )}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '25vh' }}>
+  <img src={island} style={{ height: '230px', width: '280px' }} alt="Island" />
+</div>
         </Box>
       </Container>
+      </div>
     </ThemeProvider>
+    </>
   );
 }
