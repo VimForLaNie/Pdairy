@@ -15,24 +15,45 @@ import * as moment from 'moment';
 export default function Graphfarmer() {
   const [users, setUsers] = useState([])
   const fetchUserData = () => {
-  fetch("../api/getMilkRecords/")
-    .then(async (response) => {
-      const result = await response.json()
-      console.log(result);
-      const graphdata = result.map((data) => { const datetime = moment(data.timestamp, "YYYYMMDD").calendar(); return { 
-        label: datetime, 
-        real: data.weight*10,
-      }})
-      console.log(graphdata);
-      return graphdata;
-    })
-    .then(data => {
-      setUsers(data)
-    })
-  }
-useEffect(() => {
-  fetchUserData()
-}, [])
+    fetch("../api/getMilkRecords/")
+      .then(async (response) => {
+        const result = await response.json();
+        console.log(result);
+  
+        // Create an object to store the aggregated data
+        const aggregatedData = {};
+  
+        result.forEach((data) => {
+          const datetime = moment(data.timestamp).format("MM-YYYY");
+  
+          if (aggregatedData[datetime]) {
+            aggregatedData[datetime].sumweight += data.weight;
+          } else {
+            aggregatedData[datetime] = {
+              label: datetime,
+              real: data.weight,
+              sumweight: data.weight*21,
+            };
+          }
+        });
+  
+        // Convert the aggregatedData object into an array
+        const formattedData = Object.values(aggregatedData);
+  
+        console.log(formattedData);
+        return formattedData;
+      })
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+  
+    useEffect(() => {
+      fetchUserData();
+    }, []);
   return (
     <div className="row">
       <div className="col-md-12">
@@ -50,8 +71,8 @@ useEffect(() => {
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <Tooltip />
               <Legend/>
-              <Bar dataKey="real" fill="#30BE96" />
-              <Bar dataKey="predict" fill="#c7c8c9" />
+              <Bar dataKey="sumweight" fill="#30BE96" />
+              {/* <Bar dataKey="predict" fill="#c7c8c9" /> */}
             </BarChart>
           </ResponsiveContainer>
         </div>

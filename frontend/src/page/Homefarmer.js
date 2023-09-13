@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -16,6 +16,30 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function Homefarmer() {
+  const [users, setUsers] = useState(0);
+
+  const fetchUserData = () => {
+    fetch("../api/getCows")
+      .then(async (response) => {
+        const result = await response.json();
+        console.log(result);
+
+        // Calculate the count of farms
+        const n = result.length;
+        return n;
+      })
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   return (
     <div>
       <h2 className="textshadow">Overview</h2>
@@ -31,7 +55,7 @@ export default function Homefarmer() {
           <Item  style={{ backgroundColor: 'rgb(208, 242, 255)' }}><GiCow size={30} /><div style={{fontSize: '30px', fontWeight: 'bold'}}>100K</div><div>Income</div></Item>
         </Grid>
         <Grid item xs>
-          <Item style={{ backgroundColor: 'rgb(255, 247, 205)' }}><LuMilk size={30} /><div style={{fontSize: '30px', fontWeight: 'bold'}}>100K</div><div>Total Cow</div></Item>
+          <Item style={{ backgroundColor: 'rgb(255, 247, 205)' }}><LuMilk size={30} /><div style={{fontSize: '30px', fontWeight: 'bold'}}>{users}</div><div>Total Cow</div></Item>
         </Grid>
       </Grid>
       <Graphfarmer/>
