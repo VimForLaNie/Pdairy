@@ -45,6 +45,7 @@ setInterval(() => {
         if (now - lastInputTime < 60 * 1000) return;
         console.log("Cow : ", cowID, " is done");
         const data = cowRawData.get(cowID.toString()) ?? [];
+        const rawValueKg = data.map((d) => d.value/1000);
         db.milkRecord.create({
             data: {
                 cowID: parseInt(cowID.toString()),
@@ -53,8 +54,8 @@ setInterval(() => {
                 timestamp: new Date(),
             },
         }).then(cow => console.log(cow));
-
-        postData("../ai/predict_milk", data, '').then((result) => {
+        // fetch("/");
+        postData("http://ai:3000/predict_milk", rawValueKg, '').then((result) => {
             db.cow.update({
                 where: {
                     ID: parseInt(cowID.toString()),
