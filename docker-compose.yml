@@ -75,10 +75,12 @@ services:
       dockerfile: ./API/Dockerfile
     restart: always
     depends_on:
+      - ai
       - redis
       - postgres
       - mqtt
     links: 
+      - "ai:ai"
       - "mqtt:broker"
       - "redis:redis"
       - "postgres:db"
@@ -96,3 +98,9 @@ services:
       - postgres
     ports:
       - 3005:3000
+  ai:
+    build: 
+      context: ./ai
+    restart: always
+    ports :
+      - 5000:3000
