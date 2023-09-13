@@ -48,23 +48,6 @@ expressApp.get('/getMilkRecord', async (req:any, res) => {
     res.send(result);
 });
 
-expressApp.post('/prediction',jsonParser , async (req:any, res) => {
-    console.log('Got query:', req.body);
-    const { cowID, predictions } = req.body;
-    if (cowID === undefined || predictions === undefined || predictions.length === 0) {
-        return res.sendStatus(400);
-    }
-    const result = await prisma.cow.update({
-        where: {
-            ID: parseInt(cowID),
-        },
-        data: {
-            prediction: JSON.stringify(predictions),
-        },
-    });
-    res.send(result);
-});
-
 expressApp.post('/forceRecord', jsonParser, async (req:any, res) => {
     const { cowID, weight, timestamp, rawData } = req.body;
     console.log('Got body:', req.body);
@@ -124,11 +107,24 @@ expressApp.post('/breedingPrediction', jsonParser, async (req:any, res) => {
             ID: parseInt(cowID),
         },
         data: {
-            breedingPrediction: prediction,
+            breedingPrediction: JSON.parse(prediction),
     }});
-
     console.log(result);
     res.send(result);
+});
+
+expressApp.get('/getBreedingPrediction', async (req:any, res) => {
+    const result = await prisma.cow.findMany({
+        where: {
+        },
+    });
+    let ans:any[] = []
+    result.forEach(cow => {
+        if(cow.breedingPrediction == null) return
+        ans.push(cow.breedingPrediction);
+    })
+    console.log(ans);
+    res.send(ans);
 });
 
 expressApp.post('/breedingRecord', jsonParser, async (req:any, res) => {
