@@ -12,28 +12,34 @@ export default function Graphunion() {
     fetch("../api/getMilkRecords/")
       .then(async (res) => {
         const milkpercow = await res.json();
-        const arrmilk = new Array(10); // Create an array with 10 rows
-        for (let i = 0; i < 10; i++) {
-          arrmilk[i] = new Array(); // For each row, create an array with no initial columns
-        }
+        const arrmilk = new Array(10).fill(0).map(() => []); // Initialize a 2D array
 
         let a = moment("09-01-2023 +0000", "MM-DD-YYYY Z").valueOf();
         let b = moment.duration(a, 'milliseconds');
         let starto = Math.floor(b.asDays());
 
         milkpercow.forEach((data) => {
-          let rower = data.cowID;
           const dmy = moment(data.timestamp).format("MM-DD-YYYY");
           let mill = moment(dmy, "MM-DD-YYYY").valueOf();
           let duration = moment.duration(mill, 'milliseconds');
           let coler = Math.floor(duration.asDays()) - starto;
-          arrmilk[rower][coler] = data.weight;
+
+          // Validate cowID and coler
+          if (
+            typeof data.cowID === "number" &&
+            data.cowID >= 0 &&
+            data.cowID < arrmilk.length &&
+            typeof coler === "number" &&
+            coler >= 0 &&
+            coler < numCols
+          ) {
+            arrmilk[data.cowID][coler] = data.weight;
+          }
         });
 
         const prediction = new Array(10).fill(0).map(() => []);
 
-        arrmilk.forEach((milkData, index) => {
-          if (index === 3) return;
+        Promise.all(arrmilk.map((milkData) =>
           fetch("../ai/predict_milk", {
             method: "POST",
             headers: {
@@ -46,40 +52,54 @@ export default function Graphunion() {
             .then(async (response) => {
               const result = await response.json();
               result.forEach((milkInDay, idx) => {
-                colSums[idx] += milkInDay;
+                if (!Array.isArray(prediction[idx])) {
+                  prediction[idx] = []; // Initialize the array if it's not already an array
+                }
+                if (colSums[idx] !== undefined) {
+                  colSums[idx] += milkInDay;
+                }
+                prediction[idx].push(milkInDay);
               });
-              prediction[index].push(...result);
-            });
-        });
+            })
+        ))
+          .then(() => {
+            fetch("../api/getMilkRecords/")
+              .then(async (response) => {
+                const result = await response.json();
+                let dex = 0;
+                const aggregatedData = {};
 
-        fetch("../api/getMilkRecords/")
-          .then(async (response) => {
-            const result = await response.json();
+                result.forEach((data) => {
+                  let datetime = moment(data.timestamp).format("DD-MM-YYYY");
+                  if (aggregatedData[datetime]) {
+                    aggregatedData[datetime].sumweight += data.weight;
+                  } else {
+                    aggregatedData[datetime] = {
+                      label: datetime,
+                      real: data.weight,
+                      sumweight: data.weight,
+                    };
+                    dex += 1;
+                  }
+                });
 
-            // Create an object to store the aggregated data
-            const aggregatedData = {};
-            console.log(colSums);
-            result.forEach((data,dex) => {
-              const datetime = moment(data.timestamp).format("DD-MM-YYYY");
-              if (aggregatedData[datetime]) {
-                aggregatedData[datetime].sumweight += data.weight;
-              } else {
-                aggregatedData[datetime] = {
-                  label: datetime,
-                  real: data.weight,
-                  predicter: colSums[dex], // Use colSums[0] for demonstration; replace with the desired column
-                  sumweight: data.weight,
-                };
-              }
-            });
+                let astro;
+                for (let aa = dex; aa < 305; aa++) {
+                  astro = moment(Object.keys(aggregatedData).slice(-1)[0], "DD-MM-YYYY").add(1, 'days');
+                  let formattedDate = astro.format('DD-MM-YYYY');
+                  aggregatedData[formattedDate] = {
+                    label: formattedDate,
+                    predicter: colSums[aa],
+                  };
+                }
 
-            // Convert the aggregatedData object into an array
-            const formattedData = Object.values(aggregatedData);
-            console.log(formattedData);
-            setUsers(formattedData);
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
+                // Convert the aggregatedData object into an array
+                const formattedData = Object.values(aggregatedData);
+                setUsers(formattedData);
+              })
+              .catch((error) => {
+                console.error("Error fetching data:", error);
+              });
           });
       });
   };
@@ -105,8 +125,8 @@ export default function Graphunion() {
               <YAxis fontSize={16} />
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <Legend />
-              <Line type="monotone" dataKey="sumweight" stroke="#237bba" />
-              <Line type="monotone" dataKey="predicter" stroke="#808080" />
+              <Line type="monotone" dataKey="sumweight" stroke="#237bba" dot={false} />
+              <Line type="monotone" dataKey="predicter" stroke="#808080" dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

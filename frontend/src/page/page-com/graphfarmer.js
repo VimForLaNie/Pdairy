@@ -1,59 +1,115 @@
 import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import './graph.css'
-import * as moment from 'moment';
+import './graph.css';
+import moment from 'moment';
 
-// const data = [
-//   { label: 'Jan', real: 21, predict: 21 },
-//   { label: 'Feb', real: 35, predict: 35 },
-//   { label: 'Mar', real: 75, predict: 57 },
-//   { label: 'Apr', real: 51, predict: 55 },
-//   { label: 'May', real: 41, predict: 63 },
-//   { label: 'Jun', real: 47, predict: 71 }
-// ];
+export default function Graphunion() {
+  const [users, setUsers] = useState([]);
+  const numCols = 305;
+  const colSums = new Array(numCols).fill(0);
 
-export default function Graphfarmer() {
-  const [users, setUsers] = useState([])
   const fetchUserData = () => {
     fetch("../api/getMilkRecords/")
-      .then(async (response) => {
-        const result = await response.json();
-        console.log(result);
-  
-        // Create an object to store the aggregated data
-        const aggregatedData = {};
-  
-        result.forEach((data) => {
-          const datetime = moment(data.timestamp).format("MM-YYYY");
-  
-          if (aggregatedData[datetime]) {
-            aggregatedData[datetime].sumweight += data.weight;
-          } else {
-            aggregatedData[datetime] = {
-              label: datetime,
-              real: data.weight,
-              sumweight: data.weight*21,
-            };
+      .then(async (res) => {
+        const milkpercow = await res.json();
+        const arrmilk = new Array(10).fill(0).map(() => []); // Initialize a 2D array
+
+        let a = moment("09-2023 +0000", "MM-YYYY Z").valueOf();
+        let b = moment.duration(a, 'milliseconds');
+        let starto = Math.floor(b.asMonths());
+
+        milkpercow.forEach((data) => {
+          const dmy = moment(data.timestamp).format("MM-YYYY");
+          let mill = moment(dmy, "MM-YYYY").valueOf();
+          let duration = moment.duration(mill, 'milliseconds');
+          let coler = Math.floor(duration.asMonths()) - starto;
+
+          // Validate cowID and coler
+          if (
+            typeof data.cowID === "number" &&
+            data.cowID >= 0 &&
+            data.cowID < arrmilk.length &&
+            typeof coler === "number" &&
+            coler >= 0 &&
+            coler < numCols
+          ) {
+            arrmilk[data.cowID][coler] = data.weight;
           }
         });
-  
-        // Convert the aggregatedData object into an array
-        const formattedData = Object.values(aggregatedData);
-  
-        console.log(formattedData);
-        return formattedData;
-      })
-      .then((data) => {
-        setUsers(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.log(arrmilk);
+
+        const prediction = new Array(10).fill(0).map(() => []);
+
+        Promise.all(arrmilk.map((milkData) =>
+          fetch("../ai/predict_milk", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              "data": milkData,
+            }),
+          })
+            .then(async (response) => {
+              const result = await response.json();
+              result.forEach((milkInDay, idx) => {
+                if (!Array.isArray(prediction[idx])) {
+                  prediction[idx] = []; // Initialize the array if it's not already an array
+                }
+                if (colSums[idx] !== undefined) {
+                  colSums[idx] += milkInDay;
+                }
+                prediction[idx].push(milkInDay);
+              });
+            })
+        ))
+          .then(() => {
+            fetch("../api/getMilkRecords/")
+              .then(async (response) => {
+                const result = await response.json();
+                let dex = 0;
+                const aggregatedData = {};
+
+                result.forEach((data) => {
+                  let datetime = moment(data.timestamp).format("MM-YYYY"); // Format to month and year
+                  if (aggregatedData[datetime]) {
+                    aggregatedData[datetime].sumweight += data.weight;
+                  } else {
+                    aggregatedData[datetime] = {
+                      label: datetime,
+                      real: data.weight,
+                      sumweight: data.weight,
+                    };
+                    dex += 1;
+                  }
+                });
+
+                let astro;
+                for (let aa = dex; aa < 10; aa++) {
+                  astro = moment(Object.keys(aggregatedData).slice(-1)[0], "MM-YYYY").add(1, 'months'); // Increment by one month
+                  let formattedDate = astro.format('MM-YYYY');
+                  aggregatedData[formattedDate] = {
+                    label: formattedDate,
+                    predicter: colSums[aa],
+                  };
+                }
+                console.log(colSums);
+                console.log(aggregatedData);
+                // Convert the aggregatedData object into an array
+                const formattedData = Object.values(aggregatedData);
+                setUsers(formattedData);
+              })
+              .catch((error) => {
+                console.error("Error fetching data:", error);
+              });
+          });
       });
   };
-  
-    useEffect(() => {
-      fetchUserData();
-    }, []);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   return (
     <div className="row">
       <div className="col-md-12">
@@ -72,12 +128,11 @@ export default function Graphfarmer() {
               <Tooltip />
               <Legend/>
               <Bar dataKey="sumweight" fill="#30BE96" />
-              {/* <Bar dataKey="predict" fill="#c7c8c9" /> */}
+              <Bar dataKey="predicter" fill="#c7c8c9" />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
-
     </div>
-  )
+  );
 }
