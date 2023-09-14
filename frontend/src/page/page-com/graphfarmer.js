@@ -3,10 +3,24 @@ import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Toolti
 import './graph.css';
 import moment from 'moment';
 
-export default function Graphunion() {
+// const data = [
+//   { label: '09/2023', income: 3081 },
+//   { label: '10/2023',  predicter: 3201 },
+//   { label: '11/2023',  predicter: 3765 },
+//   { label: '12/2023',  predicter: 3205 },
+//   { label: '01/2024',  predicter: 2705 },
+//   { label: '02/2024',  predicter: 2402 },
+//   { label: '03/2024',  predicter: 2159 },
+//   { label: '04/2024',  predicter: 1634 },
+//   { label: '05/2024',  predicter: 1576 },
+//   { label: '06/2024',  predicter: 1402 },
+// ];
+
+export default function Graphfarmer() {
   const [users, setUsers] = useState([]);
   const numCols = 305;
   const colSums = new Array(numCols).fill(0);
+  const lovely=new Array();
 
   const fetchUserData = () => {
     fetch("../api/getMilkRecords/")
@@ -33,7 +47,7 @@ export default function Graphunion() {
             coler >= 0 &&
             coler < numCols
           ) {
-            arrmilk[data.cowID][coler] = data.weight;
+            arrmilk[data.cowID][coler] = data.weight*21.25;
           }
         });
         console.log(arrmilk);
@@ -63,22 +77,33 @@ export default function Graphunion() {
               });
             })
         ))
+
+
           .then(() => {
             fetch("../api/getMilkRecords/")
               .then(async (response) => {
                 const result = await response.json();
                 let dex = 0;
                 const aggregatedData = {};
+                
+                let summary=0;
+                for(let love=0;love<300;love++){
+                  summary+=colSums[love];
+                  if((love)%30==0){
+                    lovely[love/30]=summary;
+                    summary=0;
+                  }
+                }
 
                 result.forEach((data) => {
                   let datetime = moment(data.timestamp).format("MM-YYYY"); // Format to month and year
                   if (aggregatedData[datetime]) {
-                    aggregatedData[datetime].sumweight += data.weight;
+                    aggregatedData[datetime].income += data.weight;
                   } else {
                     aggregatedData[datetime] = {
                       label: datetime,
                       real: data.weight,
-                      sumweight: data.weight,
+                      income: data.weight,
                     };
                     dex += 1;
                   }
@@ -90,10 +115,10 @@ export default function Graphunion() {
                   let formattedDate = astro.format('MM-YYYY');
                   aggregatedData[formattedDate] = {
                     label: formattedDate,
-                    predicter: colSums[aa],
+                    predicter: lovely[aa],
                   };
                 }
-                console.log(colSums);
+                console.log(lovely);
                 console.log(aggregatedData);
                 // Convert the aggregatedData object into an array
                 const formattedData = Object.values(aggregatedData);
@@ -127,7 +152,7 @@ export default function Graphunion() {
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <Tooltip />
               <Legend/>
-              <Bar dataKey="sumweight" fill="#30BE96" />
+              <Bar dataKey="income" fill="#30BE96" />
               <Bar dataKey="predicter" fill="#c7c8c9" />
             </BarChart>
           </ResponsiveContainer>

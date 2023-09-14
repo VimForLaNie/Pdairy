@@ -36,11 +36,16 @@ function createData(tag, date) {
 }
 
 const rows = [
-  createData("#1234", "19/06/58"),
-  createData("#5678", "19/06/58"),
-  createData("#8888", "19/06/58"),
-  createData("#3253", "19/06/58"),
-  createData("#7648", "19/06/58"),
+  createData("#4678371", "17/09/66"),
+  createData("#9897422", "25/09/66"),
+  createData("#7460983", "19/10/66"),
+  createData("#2408969", "29/10/66"),
+  createData("#0008943", "31/10/66"),
+  createData("#5584828", "11/11/66"),
+  createData("#5470994", "18/10/66"),
+  createData("#5586307", "02/11/66"),
+  createData("#9440366", "09/11/66"),
+  createData("#5861861", "13/12/66"),
 ];
 
 export default function BasicTable() {
@@ -50,7 +55,7 @@ export default function BasicTable() {
         <TableHead>
           <TableRow>
             <StyledTableCell align='center'>Tag Cow</StyledTableCell>
-            <StyledTableCell align="center">Date</StyledTableCell>
+            <StyledTableCell align="center">Predict mating day</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
