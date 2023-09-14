@@ -8,6 +8,7 @@
 
   const showMilk = async () => {
 		milkData = await getData('../api/getMilkRecords',key);
+    milkData.sort((a,b) => a.ID - b.ID);
 		// console.log(milkData);
 	}
 
