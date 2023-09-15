@@ -28,27 +28,27 @@ export default function Graphfarmer() {
         const milkpercow = await res.json();
         const arrmilk = new Array(10).fill(0).map(() => []); // Initialize a 2D array
 
-        let a = moment("09-2023 +0000", "MM-YYYY Z").valueOf();
+        let a = moment("09-2023", "MM-YY").valueOf();
         let b = moment.duration(a, 'milliseconds');
         let starto = Math.floor(b.asMonths());
 
         milkpercow.forEach((data) => {
-          const dmy = moment(data.timestamp).format("MM-YYYY");
-          let mill = moment(dmy, "MM-YYYY").valueOf();
+          const dmy = moment(data.timestamp).format("MM-YY");
+          let mill = moment(dmy, "MM-YY").valueOf();
           let duration = moment.duration(mill, 'milliseconds');
           let coler = Math.floor(duration.asMonths()) - starto;
 
           // Validate cowID and coler
-          if (
-            typeof data.cowID === "number" &&
-            data.cowID >= 0 &&
-            data.cowID < arrmilk.length &&
-            typeof coler === "number" &&
-            coler >= 0 &&
-            coler < numCols
-          ) {
-            arrmilk[data.cowID][coler] = data.weight*21.25;
-          }
+          // if (
+          //   typeof data.cowID === "number" &&
+          //   data.cowID >= 0 &&
+          //   data.cowID < arrmilk.length &&
+          //   typeof coler === "number" &&
+          //   coler >= 0 &&
+          //   coler < numCols
+          // ) {
+            arrmilk[data.cowID-1][coler] = data.weight;
+          // }
         });
         console.log(arrmilk);
 
@@ -96,14 +96,14 @@ export default function Graphfarmer() {
                 }
 
                 result.forEach((data) => {
-                  let datetime = moment(data.timestamp).format("MM-YYYY"); // Format to month and year
+                  let datetime = moment(data.timestamp).format("MM-YY"); // Format to month and year
                   if (aggregatedData[datetime]) {
-                    aggregatedData[datetime].income += data.weight;
+                    aggregatedData[datetime].income += data.weight*21.25;
                   } else {
                     aggregatedData[datetime] = {
                       label: datetime,
                       real: data.weight,
-                      income: data.weight,
+                      income: data.weight*21.25,
                     };
                     dex += 1;
                   }
@@ -111,8 +111,8 @@ export default function Graphfarmer() {
 
                 let astro;
                 for (let aa = dex; aa < 10; aa++) {
-                  astro = moment(Object.keys(aggregatedData).slice(-1)[0], "MM-YYYY").add(1, 'months'); // Increment by one month
-                  let formattedDate = astro.format('MM-YYYY');
+                  astro = moment(Object.keys(aggregatedData).slice(-1)[0], "MM-YY").add(1, 'months'); // Increment by one month
+                  let formattedDate = astro.format('MM-YY');
                   aggregatedData[formattedDate] = {
                     label: formattedDate,
                     predicter: lovely[aa],
@@ -139,7 +139,7 @@ export default function Graphfarmer() {
     <div className="row">
       <div className="col-md-12">
         <h1></h1>
-        <div className="textshadow" style={{ fontFamily: 'Athiti, sans-serif', fontWeight: 'bold',fontSize:'36px'}}>กราฟแสดงจำนวนเงินต่อเดือน</div>
+        <div style={{ fontFamily: 'Athiti, sans-serif', fontWeight: 'bold', fontSize: '36px' }}>กราฟแสดงรายได้ต่อเดือน</div>
         <h2></h2>
       </div>
       <div className="section col-md-6">
@@ -147,11 +147,11 @@ export default function Graphfarmer() {
         <div className="section-content">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={users} margin={{ top: 15, right: 15, bottom: 15, left: 0 }}>
-              <XAxis dataKey="label" fontSize={20}/>
-              <YAxis fontSize={20}/>
+            <XAxis dataKey="label" fontSize={12} angle={-45} textAnchor="end"/>
+            <YAxis fontSize={12}/>
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <Tooltip />
-              <Legend/>
+              <Tooltip contentStyle={{ fontSize: '16px' }}/>
+              <Legend verticalAlign="top" iconSize={12} formatter={(value) => <span style={{ fontSize: '20px' }}>{value}</span>} />
               <Bar dataKey="income" fill="#30BE96" />
               <Bar dataKey="predicter" fill="#c7c8c9" />
             </BarChart>

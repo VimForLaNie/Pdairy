@@ -31,40 +31,49 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(tag, date) {
-  return { tag, date};
-}
-
-const rows = [
-  createData("#4678371", "17/09/66"),
-  createData("#9897422", "25/09/66"),
-  createData("#7460983", "19/10/66"),
-  createData("#2408969", "29/10/66"),
-  createData("#0008943", "31/10/66"),
-  createData("#5584828", "11/11/66"),
-  createData("#5470994", "18/10/66"),
-  createData("#5586307", "02/11/66"),
-  createData("#9440366", "09/11/66"),
-  createData("#5861861", "13/12/66"),
-];
-
 export default function BasicTable() {
+  const [users, setUsers] = React.useState([]); // Initialize as an empty array
+
+  React.useEffect(() => {
+    const fetchUserData = () => {
+      fetch("../api/getCows/")
+        .then(async (res) => {
+          const cowes = await res.json();
+          const arr = [];
+
+          for (let i = 0; i < cowes.length; i++) {
+            // if (cowes[i].breedingPrediction != null) {
+              arr.push({
+                tag: cowes[i].name,
+                breeding: cowes[i].breedingPrediction,
+              });
+            // }
+          }
+
+          // Set the users state with the fetched data
+          setUsers(arr);
+        });
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell align='center'>Tag Cow</StyledTableCell>
+            <StyledTableCell align='center'>Cow's name</StyledTableCell>
             <StyledTableCell align="center">Predict mating day</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {users.map((row) => (
             <StyledTableRow key={row.tag}>
               <StyledTableCell component="th" scope="row" align='center'>
                 {row.tag}
               </StyledTableCell>
-              <StyledTableCell align="center">{row.date}</StyledTableCell>
+              <StyledTableCell align="center">{row.breeding}</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>

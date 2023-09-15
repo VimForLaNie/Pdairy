@@ -20,7 +20,7 @@ export default function Graphunion() {
   const colSums = new Array(numCols).fill(0);
 
   const fetchUserData = () => {
-    fetch("../api/getMilkRecords/")
+    fetch("../api/getMilkRecords/") // iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/
       .then(async (res) => {
         const milkpercow = await res.json();
         const arrmilk = new Array(10); // Create an array with 10 rows
@@ -28,7 +28,7 @@ export default function Graphunion() {
           arrmilk[i] = new Array(); // For each row, create an array with no initial columns
         }
 
-        let a = moment("09-01-2023 +0000", "MM-DD-YYYY Z").valueOf();
+        let a = moment("09-01-2023", "MM-DD-YY").valueOf();
         let b = moment.duration(a, 'milliseconds');
         let starto = Math.floor(b.asDays());
 
@@ -37,8 +37,8 @@ export default function Graphunion() {
           if (!Array.isArray(arrmilk[rower])) {
             arrmilk[rower] = []; // Initialize the row if it's not already an array
           }
-          const dmy = moment(milkpercow[i].timestamp).format("MM-DD-YYYY");
-          let mill = moment(dmy, "MM-DD-YYYY").valueOf();
+          const dmy = moment(milkpercow[i].timestamp).format("MM-DD-YY");
+          let mill = moment(dmy, "MM-DD-YY").valueOf();
           let duration = moment.duration(mill, 'milliseconds');
           let coler = Math.floor(duration.asDays()) - starto + 1;
           console.log(coler);
@@ -80,29 +80,40 @@ export default function Graphunion() {
 
             console.table(colSums);
             let astro;
+            let counting=1;
             result.forEach((data) => {
-              let datetime = moment(data.timestamp).format("DD-MM-YYYY");
-              astro = moment(datetime, "DD-MM-YYYY");
+              let datetime = moment(data.timestamp).format("DD-MM-YY");
+              astro = moment(datetime, "DD-MM-YY");
+              console.log("cnt",counting,"r.leng",result.length);
               if (aggregatedData[datetime]) {
                 aggregatedData[datetime].sumweight += data.weight;
               } else {
-                aggregatedData[datetime] = {
-                  label: datetime,
-                  real: data.weight,
-                  // predicter: colSums[dex],
-                  sumweight: data.weight,
-                };
+                if(counting==result.length){
+                  aggregatedData[datetime] = {
+                    label: datetime,
+                    real: data.weight,
+                    sumweight: data.weight,
+                    predicter: data.weight,
+                  };
+                }
+                else{
+                  aggregatedData[datetime] = {
+                    label: datetime,
+                    real: data.weight,
+                    sumweight: data.weight,
+                  };
+                }
                 dex+=1;
               }
+              counting+=1;
             // const parsedDate = moment(result[dex-1].timestamp).format("DD-MM-YYYY"); 
             });
             console.log(dex);
             for (let aa = dex; aa < 305; aa++) {
               astro.add(1, 'days'); // Increment astro by one day
-              let formattedDate = astro.format('DD-MM-YYYY');
+              let formattedDate = astro.format('DD-MM-YY');
               aggregatedData[formattedDate] = {
                 label: formattedDate,
-                test: 1,
                 predicter: colSums[aa],
               };
             }
@@ -130,19 +141,19 @@ export default function Graphunion() {
         <h2></h2>
       </div>
       <div className="section col-md-6">
-        <div className="section-title">Milk (ml.)</div>
+        <div className="section-title">Milk (liter)</div>
         <div className="section-content">
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={users} margin={{ top: 15, right: 15, bottom: 15, left: 0 }}>
-              <Tooltip />
-              <XAxis dataKey="label" fontSize={16} />
-              <YAxis fontSize={16} />
+            <LineChart data={users} margin={{ top: 15, right: 15, bottom: 15, left: 0 }} >
+              <Tooltip contentStyle={{ fontSize: '16px' }}/>
+              <XAxis dataKey="label" fontSize={11} angle={-40} textAnchor="end"/>
+              <YAxis fontSize={12}/>
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <Legend />
-              <Line type="monotone" dataKey="sumweight" stroke="#237bba" dot={false}/>
-              <Line type="monotone" dataKey="predicter" stroke="#808080" dot={false}/>
+              <Legend verticalAlign="top" iconSize={12} formatter={(value) => <span style={{ fontSize: '20px' }}>{value}</span>} />
+              <Line type="monotone" dataKey="sumweight" stroke="#237bba" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="predicter" stroke="#808080" strokeWidth={2} dot={false}/>
             </LineChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer>  
         </div>
       </div>
     </div>
