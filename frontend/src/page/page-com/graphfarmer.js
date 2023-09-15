@@ -28,13 +28,13 @@ export default function Graphfarmer() {
         const milkpercow = await res.json();
         const arrmilk = new Array(10).fill(0).map(() => []); // Initialize a 2D array
 
-        let a = moment("09-2023", "MM-YY").valueOf();
+        let a = moment("09-2023 +0000", "MM-YYYY Z").valueOf();
         let b = moment.duration(a, 'milliseconds');
         let starto = Math.floor(b.asMonths());
 
         milkpercow.forEach((data) => {
-          const dmy = moment(data.timestamp).format("MM-YY");
-          let mill = moment(dmy, "MM-YY").valueOf();
+          const dmy = moment(data.timestamp).format("MM-YYYY");
+          let mill = moment(dmy, "MM-YYYY").valueOf();
           let duration = moment.duration(mill, 'milliseconds');
           let coler = Math.floor(duration.asMonths()) - starto;
 
@@ -96,7 +96,7 @@ export default function Graphfarmer() {
                 }
 
                 result.forEach((data) => {
-                  let datetime = moment(data.timestamp).format("MM-YY"); // Format to month and year
+                  let datetime = moment(data.timestamp).format("MM-YYYY"); // Format to month and year
                   if (aggregatedData[datetime]) {
                     aggregatedData[datetime].income += data.weight*21.25;
                   } else {
@@ -111,8 +111,8 @@ export default function Graphfarmer() {
 
                 let astro;
                 for (let aa = dex; aa < 10; aa++) {
-                  astro = moment(Object.keys(aggregatedData).slice(-1)[0], "MM-YY").add(1, 'months'); // Increment by one month
-                  let formattedDate = astro.format('MM-YY');
+                  astro = moment(Object.keys(aggregatedData).slice(-1)[0], "MM-YYYY").add(1, 'months'); // Increment by one month
+                  let formattedDate = astro.format('MM-YYYY');
                   aggregatedData[formattedDate] = {
                     label: formattedDate,
                     predicter: lovely[aa],
