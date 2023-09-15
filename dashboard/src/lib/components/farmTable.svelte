@@ -7,6 +7,7 @@
 
     const showFarms = async () => {
 		farmsData = await getData('../api/getFarms',key);
+    farmsData = farmsData.sort((a,b) => a.ID - b.ID);
 		console.log(farmsData);
 	}
 

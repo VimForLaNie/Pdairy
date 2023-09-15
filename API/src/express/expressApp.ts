@@ -107,11 +107,24 @@ expressApp.post('/breedingPrediction', jsonParser, async (req:any, res) => {
             ID: parseInt(cowID),
         },
         data: {
-            breedingPrediction: prediction,
+            breedingPrediction: JSON.parse(prediction),
     }});
-
     console.log(result);
     res.send(result);
+});
+
+expressApp.get('/getBreedingPrediction', async (req:any, res) => {
+    const result = await prisma.cow.findMany({
+        where: {
+        },
+    });
+    let ans:any[] = []
+    result.forEach(cow => {
+        if(cow.breedingPrediction == null) return
+        ans.push(cow.breedingPrediction);
+    })
+    console.log(ans);
+    res.send(ans);
 });
 
 expressApp.post('/breedingRecord', jsonParser, async (req:any, res) => {
