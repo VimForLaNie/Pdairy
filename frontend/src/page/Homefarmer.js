@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { MdAttachMoney } from "react-icons/md";
+import { TbCurrencyBaht } from "react-icons/tb";
 import { GiCow } from "react-icons/gi";
 import Graphfarmer from "./page-com/graphfarmer";
 import './Home.css';
@@ -93,7 +93,7 @@ export default function Homefarmer() {
           </Grid>
           <Grid item xs>
             <Item style={{ backgroundColor: 'rgb(208, 242, 255)' }}>
-              <MdAttachMoney size={30} />
+              <TbCurrencyBaht size={30} />
               <div style={{ fontSize: '30px', fontWeight: 'bold' }}>{(users.avg).toFixed(2)}</div>
               <div>Average money (Bahts/month)</div>
             </Item>

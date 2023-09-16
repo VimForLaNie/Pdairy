@@ -7,6 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import moment from 'moment';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,10 +48,13 @@ React.useEffect(() => {
 
         for (let i = 0; i < cowes.length; i++) {
           if (cowes[i].breedingPrediction != null) {
-            const breedingPrediction = JSON.parse(cowes[i].breedingPrediction);
-            const lactationDate = breedingPrediction.lactationDate;
+            let breedingPrediction = JSON.parse(cowes[i].breedingPrediction);
+            let lactationDate = moment(breedingPrediction.lactationDate).format('DD/MM/YYYY');
+            lactationDate = moment(lactationDate, 'DD/MM/YYYY').add(2, 'years').format('DD/MM/YYYY');
+            // const formatDate = lactationDate.format('DD/MM/YYYY');
             arr.push({
               tag: cowes[i].name,
+              tagrfid: cowes[i].RFID,
               breeding: lactationDate,
             });
           }
@@ -72,7 +76,7 @@ React.useEffect(() => {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell align='center'>Cow's name</StyledTableCell>
+            <StyledTableCell align='center'>Cow's name (#RFID)</StyledTableCell>
             <StyledTableCell align="center">Predict mating day</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -80,7 +84,7 @@ React.useEffect(() => {
           {users.map((row) => (
             <StyledTableRow key={row.tag}>
               <StyledTableCell component="th" scope="row" align='center'>
-                {row.tag}
+                {row.tag} (#{row.tagrfid})
               </StyledTableCell>
               <StyledTableCell align="center">{row.breeding}</StyledTableCell>
             </StyledTableRow>
