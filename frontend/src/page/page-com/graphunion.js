@@ -14,118 +14,94 @@ import moment from 'moment';
 
 // users.push({ label: 'July', sumweight: 66, predicter: 77 });
 
+async function sumArray(arr){
+  let ans = new Array(305).fill(0);
+  for(let idx = 0; idx < arr.length; idx ++){
+    let milkData = arr[idx];
+    // console.log(milkData);
+    const response = await fetch("../ai/predict_milk", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "data": milkData,
+      }),
+    })
+    const result = await response.json();
+    result.forEach((milkInDay, idx) => {
+      ans[idx]+=milkInDay;
+    });
+  }
+  return ans;
+};
+
 export default function Graphunion() {
   const [users, setUsers] = useState([]);
   const numCols = 305;
-  const colSums = new Array(numCols).fill(0);
+  let colSums = new Array(numCols).fill(0);
+  let milkpercow;
+
+  let a = moment("08-01-23", "MM-DD-YY").valueOf();
+  let b = moment.duration(a, 'milliseconds');
+  let starto = Math.floor(b.asDays());
 
   const fetchUserData = () => {
-    fetch("../api/getMilkRecords/") // iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/
+    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/") // iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/
       .then(async (res) => {
-        const milkpercow = await res.json();
+        milkpercow = await res.json();
         const arrmilk = new Array(10); // Create an array with 10 rows
         for (let i = 0; i < 10; i++) {
           arrmilk[i] = new Array(); // For each row, create an array with no initial columns
         }
-
-        let a = moment("09-01-2023", "MM-DD-YY").valueOf();
-        let b = moment.duration(a, 'milliseconds');
-        let starto = Math.floor(b.asDays());
-
         for (let i = 0; i < milkpercow.length; i++) {
           let rower = milkpercow[i].cowID-1;
-          if (!Array.isArray(arrmilk[rower])) {
-            arrmilk[rower] = []; // Initialize the row if it's not already an array
-          }
+          if(rower>=10 || rower<0 )
+            continue;
+          if(milkpercow[i].ID < 1402 || milkpercow[i].ID > 2202) // || milkpercow[i].ID > 351 
+            continue;
           const dmy = moment(milkpercow[i].timestamp).format("MM-DD-YY");
           let mill = moment(dmy, "MM-DD-YY").valueOf();
           let duration = moment.duration(mill, 'milliseconds');
           let coler = Math.floor(duration.asDays()) - starto + 1;
-          console.log(coler);
-          arrmilk[rower][coler] = milkpercow[i].weight;
+          // console.log('c',coler);
+          arrmilk[rower][coler - 1] = milkpercow[i].weight;
         }
         console.table(arrmilk);
 
-        const prediction = new Array(10).fill(0).map(() => []);
-        arrmilk.forEach((milkData, index) => {
-          fetch("../ai/predict_milk", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              "data": milkData,
-            }),
-          })
-            .then(async (response) => {
-              const result = await response.json();
-              result.forEach((milkInDay, idx) => {
-                if (!Array.isArray(prediction[index])) {
-                  prediction[index] = []; // Initialize the array if it's not already an array
-                }
-                if (colSums[idx] !== undefined) {
-                  colSums[idx] += milkInDay;
-                }
-                prediction[index].push(milkInDay);
-              });
-            });
-        });
+        // arrmilk.forEach((milkData,idx) => {
+        colSums = await sumArray(arrmilk);
+        console.table(colSums);
+        let minreal= 80;
+        let datagraph = new Array(305);
+        let i;
+        let daysToAdd;
+        for(i=0;i<minreal;i++){
 
+          daysToAdd = i;
+          let startDate = moment('2023-08-01', 'YYYY-MM-DD');
+          let targetDate = startDate.add(daysToAdd, 'days');
+          let formattedDate = targetDate.format('DD/MM/YY');
 
-        fetch("../api/getMilkRecords/")
-          .then(async (response) => {
-            const result = await response.json();
-            let dex=0;
-            const aggregatedData = {};
+          datagraph[i]={
+            label: formattedDate,
+            milk: colSums[i],
+          };
+        }
+        for(let j=i;j<305;j++){
+          
+          daysToAdd = j;
+          let startDate = moment('2023-08-01', 'YYYY-MM-DD');
+          let targetDate = startDate.add(daysToAdd, 'days');
+          let formattedDate = targetDate.format('DD/MM/YY');
 
-            console.table(colSums);
-            let astro;
-            let counting=1;
-            result.forEach((data) => {
-              let datetime = moment(data.timestamp).format("DD-MM-YY");
-              astro = moment(datetime, "DD-MM-YY");
-              console.log("cnt",counting,"r.leng",result.length);
-              if (aggregatedData[datetime]) {
-                aggregatedData[datetime].sumweight += data.weight;
-              } else {
-                if(counting==result.length){
-                  aggregatedData[datetime] = {
-                    label: datetime,
-                    real: data.weight,
-                    sumweight: data.weight,
-                    predicter: data.weight,
-                  };
-                }
-                else{
-                  aggregatedData[datetime] = {
-                    label: datetime,
-                    real: data.weight,
-                    sumweight: data.weight,
-                  };
-                }
-                dex+=1;
-              }
-              counting+=1;
-            // const parsedDate = moment(result[dex-1].timestamp).format("DD-MM-YYYY"); 
-            });
-            console.log(dex);
-            for (let aa = dex; aa < 305; aa++) {
-              astro.add(1, 'days'); // Increment astro by one day
-              let formattedDate = astro.format('DD-MM-YY');
-              aggregatedData[formattedDate] = {
-                label: formattedDate,
-                predicter: colSums[aa],
-              };
-            }
-            // console.log(aggregatedData);
-            // Convert the aggregatedData object into an array
-            const formattedData = Object.values(aggregatedData);
-            console.log(formattedData);
-            setUsers(formattedData);
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
-          });
+          datagraph[j]={
+            label: formattedDate,
+            predicter: colSums[j],
+          }
+        }
+        console.log(datagraph);
+        setUsers(datagraph);
       });
   };
 
@@ -150,7 +126,7 @@ export default function Graphunion() {
               <YAxis fontSize={12}/>
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <Legend verticalAlign="top" iconSize={12} formatter={(value) => <span style={{ fontSize: '20px' }}>{value}</span>} />
-              <Line type="monotone" dataKey="sumweight" stroke="#237bba" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="milk" stroke="#237bba" strokeWidth={2} dot={false}/>
               <Line type="monotone" dataKey="predicter" stroke="#808080" strokeWidth={2} dot={false}/>
             </LineChart>
           </ResponsiveContainer>  

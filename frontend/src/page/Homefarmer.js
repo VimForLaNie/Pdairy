@@ -17,56 +17,61 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+async function sumArray() {
+  try {
+    const response = await fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getCows/");
+    const result = await response.json();
+    const n = result.length;
+    return n;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    // Handle the error as needed
+  }
+}
+
 export default function Homefarmer() {
   const [users, setUsers] = useState({ n: 0, summilk: 0, avg: 0 }); // Initialize as an object
+  let milkpercow;
+  let a = moment("08-01-23", "MM-DD-YY").valueOf();
+  let b = moment.duration(a, 'milliseconds');
+  let starto = Math.floor(b.asDays());
   let summilk=0;
   let n=0;
   let avg=0;
   const fetchUserData = () => {
-
-    fetch("../api/getMilkRecords/")
+    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/")
       .then(async (res) => {
-        const milkpercow = await res.json();
-        const arrmilk = new Array();
-        // summilk = 0;
-        console.log(milkpercow);
-
+        milkpercow = await res.json();
+        const arrmilk = new Array(10); // Create an array with 10 rows
+        for (let i = 0; i < 10; i++) {
+          arrmilk[i] = new Array(); // For each row, create an array with no initial columns
+        }
         for (let i = 0; i < milkpercow.length; i++) {
-          arrmilk.push(milkpercow[i].weight);
+          let rower = milkpercow[i].cowID-1;
+          if(rower>=10 || rower<0 )
+            continue;
+          if(milkpercow[i].ID < 1402 || milkpercow[i].ID > 2202) // || milkpercow[i].ID > 351 
+            continue;
+          const dmy = moment(milkpercow[i].timestamp).format("MM-DD-YY");
+          let mill = moment(dmy, "MM-DD-YY").valueOf();
+          let duration = moment.duration(mill, 'milliseconds');
+          let coler = Math.floor(duration.asDays()) - starto + 1;
+          // console.log('c',coler);
+          arrmilk[rower][coler - 1] = milkpercow[i].weight;
         }
-        console.log(arrmilk);
-        for (let j = 0; j < arrmilk.length; j++) {
-          summilk += arrmilk[j];
+        for(let i=0;i<arrmilk.length;i++){
+          for(let j=0;j<arrmilk[i].length;j++){
+            summilk+=arrmilk[i][j];
+          }
         }
-        console.log(summilk);
-        let a = moment("09-2023 +0000", "MM-YYYY Z").valueOf();
-        let b = moment.duration(a, 'milliseconds');
-        let starto = Math.floor(b.asMonths());
-
-        // Calculate the number of days between the first and last milk records
-        const dmy = moment(milkpercow[milkpercow.length-1].timestamp).format("MM-YYYY");
-        let mill = moment(dmy, "MM-YYYY").valueOf();
-        let duration = moment.duration(mill, 'milliseconds');
-        let months = Math.floor(duration.asMonths()) - starto + 1;
-        avg = summilk/months;
-        console.log(avg);
+        summilk = summilk*21.25;
+        avg = summilk / 3;
         // Set the users state with both n, summilk, and avg
         // setUsers({ ...users, summilk: summilk, avg: avg });
-      });
-
-    fetch("../api/getCows/")
-      .then(async (response) => {
-        const result = await response.json();
-        console.log(result);
-
-        // Calculate the count of farms
-        n = result.length;
-
+        n= await sumArray();
+        n=n-5;
         // Set the users state with both n, summilk, and avg
-        setUsers({ ...users, summilk: summilk*21.25, avg: avg*21.25, n: n });
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+        setUsers({ ...users, summilk,avg,n });
       });
   };
 
@@ -82,15 +87,15 @@ export default function Homefarmer() {
           <Grid item xs>
             <Item style={{ backgroundColor: 'rgb(209, 233, 252)' }}>
               <PiHandCoinsLight size={30} />
-              <div style={{ fontSize: '30px', fontWeight: 'bold' }}>{users.summilk}</div>
+              <div style={{ fontSize: '30px', fontWeight: 'bold' }}>{(users.summilk).toFixed(2)}</div>
               <div>All income (Bahts)</div>
             </Item>
           </Grid>
           <Grid item xs>
             <Item style={{ backgroundColor: 'rgb(208, 242, 255)' }}>
               <MdAttachMoney size={30} />
-              <div style={{ fontSize: '30px', fontWeight: 'bold' }}>{users.avg}</div>
-              <div>Average money (Bahts/day)</div>
+              <div style={{ fontSize: '30px', fontWeight: 'bold' }}>{(users.avg).toFixed(2)}</div>
+              <div>Average money (Bahts/month)</div>
             </Item>
           </Grid>
           <Grid item xs>

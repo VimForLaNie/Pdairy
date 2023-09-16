@@ -34,29 +34,38 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function BasicTable() {
   const [users, setUsers] = React.useState([]); // Initialize as an empty array
 
-  React.useEffect(() => {
-    const fetchUserData = () => {
-      fetch("../api/getCows/")
-        .then(async (res) => {
-          const cowes = await res.json();
-          const arr = [];
+React.useEffect(() => {
+  const fetchUserData = () => {
+    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getCows/")
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
 
-          for (let i = 0; i < cowes.length; i++) {
-            // if (cowes[i].breedingPrediction != null) {
-              arr.push({
-                tag: cowes[i].name,
-                breeding: cowes[i].breedingPrediction,
-              });
-            // }
+        const cowes = await res.json();
+        const arr = [];
+
+        for (let i = 0; i < cowes.length; i++) {
+          if (cowes[i].breedingPrediction != null) {
+            const breedingPrediction = JSON.parse(cowes[i].breedingPrediction);
+            const lactationDate = breedingPrediction.lactationDate;
+            arr.push({
+              tag: cowes[i].name,
+              breeding: lactationDate,
+            });
           }
+        }
+        console.log(cowes);
+        // Set the users state with the fetched data
+        setUsers(arr);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
 
-          // Set the users state with the fetched data
-          setUsers(arr);
-        });
-    };
-
-    fetchUserData();
-  }, []);
+  fetchUserData(); // Call the fetchUserData function
+}, []);
 
   return (
     <TableContainer component={Paper}>
@@ -79,5 +88,5 @@ export default function BasicTable() {
         </TableBody>
       </Table>
     </TableContainer>
-  );
+  )
 }

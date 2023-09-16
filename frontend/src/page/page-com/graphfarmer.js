@@ -16,118 +16,101 @@ import moment from 'moment';
 //   { label: '06/2024',  predicter: 1402 },
 // ];
 
+async function sumArray(arr){
+  let ans = new Array(305).fill(0);
+  for(let idx = 0; idx < arr.length; idx ++){
+    let milkData = arr[idx];
+    // console.log(milkData);
+    const response = await fetch("../ai/predict_milk", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "data": milkData,
+      }),
+    })
+    const result = await response.json();
+    result.forEach((milkInDay, idx) => {
+      ans[idx]+=milkInDay;
+    });
+  }
+  return ans;
+};
+
 export default function Graphfarmer() {
   const [users, setUsers] = useState([]);
   const numCols = 305;
-  const colSums = new Array(numCols).fill(0);
-  const lovely=new Array();
+  let colSums = new Array(numCols).fill(0);
+  let milkpercow;
+
+  let a = moment("08-01-23", "MM-DD-YY").valueOf();
+  let b = moment.duration(a, 'milliseconds');
+  let starto = Math.floor(b.asDays());
 
   const fetchUserData = () => {
-    fetch("../api/getMilkRecords/")
+    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/") // iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/
       .then(async (res) => {
-        const milkpercow = await res.json();
-        const arrmilk = new Array(10).fill(0).map(() => []); // Initialize a 2D array
-
-        let a = moment("09-2023 +0000", "MM-YYYY Z").valueOf();
-        let b = moment.duration(a, 'milliseconds');
-        let starto = Math.floor(b.asMonths());
-
-        milkpercow.forEach((data) => {
-          const dmy = moment(data.timestamp).format("MM-YYYY");
-          let mill = moment(dmy, "MM-YYYY").valueOf();
+        milkpercow = await res.json();
+        const arrmilk = new Array(10); // Create an array with 10 rows
+        for (let i = 0; i < 10; i++) {
+          arrmilk[i] = new Array(); // For each row, create an array with no initial columns
+        }
+        for (let i = 0; i < milkpercow.length; i++) {
+          let rower = milkpercow[i].cowID-1;
+          if(rower>=10 || rower<0 )
+            continue;
+          if(milkpercow[i].ID < 1402 || milkpercow[i].ID > 2202) // || milkpercow[i].ID > 351 
+            continue;
+          const dmy = moment(milkpercow[i].timestamp).format("MM-DD-YY");
+          let mill = moment(dmy, "MM-DD-YY").valueOf();
           let duration = moment.duration(mill, 'milliseconds');
-          let coler = Math.floor(duration.asMonths()) - starto;
+          let coler = Math.floor(duration.asDays()) - starto + 1;
+          // console.log('c',coler);
+          arrmilk[rower][coler - 1] = milkpercow[i].weight;
+        }
+        console.table(arrmilk);
 
-          // Validate cowID and coler
-          // if (
-          //   typeof data.cowID === "number" &&
-          //   data.cowID >= 0 &&
-          //   data.cowID < arrmilk.length &&
-          //   typeof coler === "number" &&
-          //   coler >= 0 &&
-          //   coler < numCols
-          // ) {
-            arrmilk[data.cowID-1][coler] = data.weight;
-          // }
-        });
-        console.log(arrmilk);
+        // arrmilk.forEach((milkData,idx) => {
+        colSums = await sumArray(arrmilk);
+        let colSumsMonth = new Array();
+        console.table(colSums);
+        let tmp=0;
+        let z;
+        for(z=0;z<305;z++){
+          tmp+=colSums[z];
+          if(z%30==0 && z!=0){
+            colSumsMonth.push(tmp);
+            tmp=0;
+          }
+        }
+        console.log(colSumsMonth);
+        let datagraph = new Array(10);
+        let i;
+        let monthsToAdd;
+        for(i=0;i<3;i++){
+          monthsToAdd = i;
+          let startDate = moment('2023-08', 'YYYY-MM');
+          let targetDate = startDate.add(monthsToAdd, 'months');
+          let formattedDate = targetDate.format('MM/YYYY');
 
-        const prediction = new Array(10).fill(0).map(() => []);
-
-        Promise.all(arrmilk.map((milkData) =>
-          fetch("../ai/predict_milk", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              "data": milkData,
-            }),
-          })
-            .then(async (response) => {
-              const result = await response.json();
-              result.forEach((milkInDay, idx) => {
-                if (!Array.isArray(prediction[idx])) {
-                  prediction[idx] = []; // Initialize the array if it's not already an array
-                }
-                if (colSums[idx] !== undefined) {
-                  colSums[idx] += milkInDay;
-                }
-                prediction[idx].push(milkInDay);
-              });
-            })
-        ))
-
-
-          .then(() => {
-            fetch("../api/getMilkRecords/")
-              .then(async (response) => {
-                const result = await response.json();
-                let dex = 0;
-                const aggregatedData = {};
-                
-                let summary=0;
-                for(let love=0;love<300;love++){
-                  summary+=colSums[love];
-                  if((love)%30==0){
-                    lovely[love/30]=summary;
-                    summary=0;
-                  }
-                }
-
-                result.forEach((data) => {
-                  let datetime = moment(data.timestamp).format("MM-YYYY"); // Format to month and year
-                  if (aggregatedData[datetime]) {
-                    aggregatedData[datetime].income += data.weight*21.25;
-                  } else {
-                    aggregatedData[datetime] = {
-                      label: datetime,
-                      real: data.weight,
-                      income: data.weight*21.25,
-                    };
-                    dex += 1;
-                  }
-                });
-
-                let astro;
-                for (let aa = dex; aa < 10; aa++) {
-                  astro = moment(Object.keys(aggregatedData).slice(-1)[0], "MM-YYYY").add(1, 'months'); // Increment by one month
-                  let formattedDate = astro.format('MM-YYYY');
-                  aggregatedData[formattedDate] = {
-                    label: formattedDate,
-                    predicter: lovely[aa],
-                  };
-                }
-                console.log(lovely);
-                console.log(aggregatedData);
-                // Convert the aggregatedData object into an array
-                const formattedData = Object.values(aggregatedData);
-                setUsers(formattedData);
-              })
-              .catch((error) => {
-                console.error("Error fetching data:", error);
-              });
-          });
+          datagraph[i]={
+            label: formattedDate,
+            income: colSumsMonth[i]*21.25,
+          };
+        }
+        for(let j=i;j<10;j++){
+          monthsToAdd = j;
+          let startDate = moment('2023-08', 'YYYY-MM');
+          let targetDate = startDate.add(monthsToAdd, 'months');
+          let formattedDate = targetDate.format('MM/YYYY');
+          datagraph[j]={
+            label: formattedDate,
+            predicter: colSumsMonth[j]*21.25,
+          }
+        }
+        console.log(datagraph);
+        setUsers(datagraph);
       });
   };
 
