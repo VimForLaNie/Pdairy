@@ -7,6 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import moment from 'moment';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,39 +32,65 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(tag, date) {
-  return { tag, date};
-}
-
-const rows = [
-  createData("#1234", "19/06/58"),
-  createData("#5678", "19/06/58"),
-  createData("#8888", "19/06/58"),
-  createData("#3253", "19/06/58"),
-  createData("#7648", "19/06/58"),
-];
-
 export default function BasicTable() {
+  const [users, setUsers] = React.useState([]); // Initialize as an empty array
+
+React.useEffect(() => {
+  const fetchUserData = () => {
+    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getCows/")
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const cowes = await res.json();
+        const arr = [];
+
+        for (let i = 0; i < cowes.length; i++) {
+          if (cowes[i].breedingPrediction != null) {
+            let breedingPrediction = JSON.parse(cowes[i].breedingPrediction);
+            let lactationDate = moment(breedingPrediction.lactationDate).format('DD/MM/YYYY');
+            lactationDate = moment(lactationDate, 'DD/MM/YYYY').add(2, 'years').format('DD/MM/YYYY');
+            // const formatDate = lactationDate.format('DD/MM/YYYY');
+            arr.push({
+              tag: cowes[i].name,
+              tagrfid: cowes[i].RFID,
+              breeding: lactationDate,
+            });
+          }
+        }
+        console.log(cowes);
+        // Set the users state with the fetched data
+        setUsers(arr);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+  fetchUserData(); // Call the fetchUserData function
+}, []);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell align='center'>Tag Cow</StyledTableCell>
-            <StyledTableCell align="center">Date</StyledTableCell>
+            <StyledTableCell align='center'>Cow's name (#RFID)</StyledTableCell>
+            <StyledTableCell align="center">Predict mating day</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {users.map((row) => (
             <StyledTableRow key={row.tag}>
               <StyledTableCell component="th" scope="row" align='center'>
-                {row.tag}
+                {row.tag} (#{row.tagrfid})
               </StyledTableCell>
-              <StyledTableCell align="center">{row.date}</StyledTableCell>
+              <StyledTableCell align="center">{row.breeding}</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
-  );
+  )
 }

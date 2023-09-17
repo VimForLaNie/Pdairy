@@ -1,16 +1,20 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import Appunion from './Appunion';
 import reportWebVitals from './reportWebVitals';
+import User from './User';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+const statuss = localStorage.getItem('statuss'); // Retrieve the status from localStorage
+const loginStatus = localStorage.getItem('loginStatus');
+ReactDOM.render(
   <React.StrictMode>
-    {/* <App/> */}
-    <Appunion />
-  </React.StrictMode>
+    {loginStatus !== 'Success' ?  <User /> : null}
+    {loginStatus === 'Success' ? (statuss === 'farmer' ? <App /> : <Appunion />) : null}
+
+  </React.StrictMode>,
+  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

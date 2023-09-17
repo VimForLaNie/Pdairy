@@ -1,9 +1,9 @@
 import './App.css';
 import React, { useState } from 'react';
-import Navbarunion from './components/Navbarunion';
+import Navbar from './components/Navbar';
 import { GiHamburgerMenu } from "react-icons/gi";
 import Homefarmer from './page/Homefarmer';
-import User from './page/User';
+import User from './User';
 import Board from './page/Board';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -23,7 +23,7 @@ function App() {
           <GiHamburgerMenu onClick={toggleNav} style={{ cursor: "pointer" ,color:"#024e9f"}}/>
           <div className='goright'></div>
         </header>
-        <Navbarunion show={showNav} />
+        <Navbar show={showNav} />
         <div className='main'>
           <Routes>
             <Route path="/" element={<User />} />

@@ -18,15 +18,14 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "ag-grid-community": "^30.1.0",
-    "apexcharts": "^3.42.0",
     "chart.js": "^4.4.0",
     "chartjs-plugin-zoom": "^2.0.1",
     "dayjs": "^1.11.9",
     "gapi-script": "^1.2.0",
     "highcharts": "^11.1.0",
     "highcharts-react-official": "^3.2.1",
-    "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
     "react-chartjs-2": "^5.2.0",
@@ -70,5 +69,4 @@
     "@babel/preset-env": "^7.22.15",
     "@babel/preset-react": "^7.22.15"
   }
-  
 }

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Navbarunion from './components/Navbarunion';
 import { GiHamburgerMenu } from "react-icons/gi";
 import Homeunion from './page/Homeunion';
-import User from './page/User';
+import User from './User';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 
@@ -28,6 +28,7 @@ function Appunion() {
             <Route path="/" element={<User />} />
             <Route path="/user" element={<User />} />
             <Route path="/homeunion" element={<Homeunion />} />
+            {/* <Route path="/appunion" element={<Appunion/>}/> */}
           </Routes>
         </div>
       </Router>

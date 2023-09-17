@@ -1,5 +1,5 @@
 body {
-  min-height: 100vh;
+  /* min-height: 100vh; */
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -30,7 +30,7 @@ header {
 
 .sidenav {
   z-index: 10;
-  width:18vh;
+  width:20vh;
   background-color: #024e9f;
   position: absolute;
   height: 100vh;
@@ -79,7 +79,7 @@ header svg {
 }
 
 .main {
-  margin:10px;
+  margin:8px 0px;
   font-size: 24px;
   color: rgb(0, 0, 0);
 }
