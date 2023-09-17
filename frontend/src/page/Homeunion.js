@@ -18,7 +18,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 async function sumArray() {
   try {
-    const response = await fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getFarms/");
+    const response = await fetch("../api/getFarms/");
     const result = await response.json();
     const n = result.length;
     return n;
@@ -38,7 +38,7 @@ export default function Homeunion() {
   let n=0;
   let avg=0;
   const fetchUserData = () => {
-    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/")
+    fetch("../api/getMilkRecords/")
       .then(async (res) => {
         milkpercow = await res.json();
         const arrmilk = new Array(10); // Create an array with 10 rows

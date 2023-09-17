@@ -49,7 +49,7 @@ export default function Graphfarmer() {
   let starto = Math.floor(b.asDays());
 
   const fetchUserData = () => {
-    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/") // iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/
+    fetch("../api/getMilkRecords/") // iwing.cpe.ku.ac.th/pdairy/api/getMilkRecords/
       .then(async (res) => {
         milkpercow = await res.json();
         const arrmilk = new Array(10); // Create an array with 10 rows
