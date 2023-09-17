@@ -37,7 +37,7 @@ export default function BasicTable() {
 
 React.useEffect(() => {
   const fetchUserData = () => {
-    fetch("https://iwing.cpe.ku.ac.th/pdairy/api/getCows/")
+    fetch("../api/getCows/")
       .then(async (res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");
