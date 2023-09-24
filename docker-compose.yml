@@ -27,11 +27,8 @@ services:
     env_file:
       - .env
     image: "postgres:alpine"
-    # command: postgres -c config_file=/etc/postgresql.conf
     environment:
-      # PGUSER: ${POSTGRES_USER}
       POSTGRES_DB: db
-      # POSTGRES_PASSWORD: 123456
     volumes:
       - db:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
